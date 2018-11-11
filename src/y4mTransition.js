@@ -1,4 +1,5 @@
 var inputVideoFile = "../resource/BigKill1min.mp4";
+var commonName = inputVideoFile.split('resource/')[1].split('.')[0];
 var ffmpeg = require('fluent-ffmpeg');
 var fs = require('fs');
 
@@ -15,15 +16,15 @@ ffmpeg.ffprobe(inputVideoFile, function(err, metadata) {
     resolution = width + "x" + height;
 });
 
-var jsonFile = "../resource/reverse/BigKill1mjson.txt";
+var jsonFile = "../resource/reverse/"+commonName+"json.txt";
 
 function processingInputFile(i,length,breadth,psnrBitrateCounter){
-    var outputVideoFile = "../resource/reverse/IntermediateCRFEncoding"+length+"x"+breadth+"_"+i+".mp4";
-    var y4mOutput = "../resource/reverse/y4mOutput"+length+"x"+breadth+"_"+i+".y4m";
+    var outputVideoFile = "../resource/reverse/"+commonName+"IntermediateCRFEncoding"+length+"x"+breadth+"_"+i+".mp4";
+    var y4mOutput = "../resource/reverse/"+commonName+"y4mOutput"+length+"x"+breadth+"_"+i+".y4m";
 
 
 //saving console log message in a text file
-    var logFile = "../resource/log"+length+"x"+breadth+"_"+i+".txt";
+    var logFile = "../resource/log"+commonName+length+"x"+breadth+"_"+i+".txt";
 
     var util = require('util');
     var logFile = fs.createWriteStream(logFile, { flags: 'a' });
@@ -96,7 +97,7 @@ function y4mcal(i,length,breadth,outputVideoFile,y4mOutput,psnrBitrateCounter) {
 }
 //Converting raw y4m file to mp4
 function rawTomp4(i,length,breadth,y4mOutput,outputVideoFile,psnrBitrateCounter) {
-    var finalOutput = "../resource/reverse/finalUpscaledOutput"+length+"x"+breadth+"_"+i+".mp4";
+    var finalOutput = "../resource/reverse/finalUpscaledOutput"+commonName+length+"x"+breadth+"_"+i+".mp4";
     var rawToMP4 = ffmpeg(y4mOutput)
         .addOption('-c:v libx264')
         .on('start', function(commandLine) {
@@ -148,7 +149,7 @@ function psnrcal(i,length,breadth,y4mOutput,finalOutput,psnrBitrateCounter) {
             console.log(JSON.stringify(stdout, null, " "));
             var averagePSNR = JSON.stringify(stdout, null, " ").match("average:(.*)min:");
             var fs = require("fs");
-            var psnrFile = "../resource/reverse/BigKill1mPSNR"+length+"x"+breadth+"_"+i+".txt";
+            var psnrFile = "../resource/reverse/"+commonName+"PSNR"+length+"x"+breadth+"_"+i+".txt";
             var jsonstream = fs.createWriteStream(jsonFile, {flags: 'a'});
             ffmpeg.ffprobe(finalOutput, function(err, metadata) {
                 psnrBitrateList[psnrBitrateCounter][0] = metadata.streams[0].bit_rate;
@@ -203,7 +204,7 @@ function printHullPoints() {
 
 
 
-    var hullFile = "../resource/reverse/UnlovableHull.txt";
+    var hullFile = "../resource/reverse/"+commonName+"Hull.txt";
     fs.writeFile(hullFile, '', function () {
         console.log('done overwriting contents of hull file if it exists!')
     });
@@ -412,9 +413,9 @@ function printHullPoints() {
             }]
     });
     var svg = win.document.getElementById('container').innerHTML;
-    var chartFile="../resource/HullCharts/BigKill1mChart.svg";
+    var chartFile="../resource/HullCharts/"+commonName+".svg";
     fs.writeFile(chartFile, svg, function () {
-        console.log('Wrote ' + svg.length + ' bytes to ' + 'BigKill1mChart.svg.');
+        console.log('Wrote ' + svg.length + ' bytes to ' +commonName+'.svg.');
     });
     /***************Highchart End*********************/
 }
