@@ -1,0 +1,18 @@
+Here come the Hull Points
+HullPSNR:38.923709 ...HullBitrate:2185631
+HullPSNR:undefined...HullBitrate:undefined
+HullPSNR:47.097638 ...HullBitrate:2557203
+HullPSNR:37.207333 ...HullBitrate:2223563
+HullPSNR:34.116717 ...HullBitrate:1800058
+HullPSNR:35.849403 ...HullBitrate:2037091
+HullPSNR:undefined...HullBitrate:undefined
+HullPSNR:38.137346 ...HullBitrate:2316563
+HullPSNR:undefined...HullBitrate:undefined
+HullPSNR:35.849403 ...HullBitrate:2037091
+HullPSNR:34.116717 ...HullBitrate:1800058
+HullPSNR:42.225604 ...HullBitrate:2396819
+HullPSNR:37.207333 ...HullBitrate:2223563
+HullPSNR:36.764002 ...HullBitrate:2026130
+HullPSNR:47.097638 ...HullBitrate:2557203
+HullPSNR:undefined...HullBitrate:undefined
+HullPSNR:38.923709 ...HullBitrate:2185631
