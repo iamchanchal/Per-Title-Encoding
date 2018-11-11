@@ -1,0 +1,42 @@
+{
+  "name": "fluent-ffmpeg",
+  "version": "2.1.2",
+  "description": "A fluent API to FFMPEG (http://www.ffmpeg.org)",
+  "keywords": [
+    "ffmpeg"
+  ],
+  "author": "Stefan Schaermeli <schaermu@gmail.com>",
+  "contributors": [
+    {
+      "name": "Felix Fichte",
+      "email": "spruce@space-ships.de"
+    }
+  ],
+  "license": "MIT",
+  "bugs": {
+    "mail": "schaermu@gmail.com",
+    "url": "http://github.com/fluent-ffmpeg/node-fluent-ffmpeg/issues"
+  },
+  "repository": "git://github.com/fluent-ffmpeg/node-fluent-ffmpeg.git",
+  "devDependencies": {
+    "mocha": "latest",
+    "should": "latest",
+    "jsdoc": "latest"
+  },
+  "dependencies": {
+    "async": ">=0.2.9",
+    "highcharts": "^6.2.0",
+    "jsdom": "^7.2.2",
+    "phantomjs": "^2.1.7",
+    "phantomjs-prebuilt": "^2.1.16",
+    "promise-defer": "^1.0.0",
+    "which": "^1.1.1"
+  },
+  "engines": {
+    "node": ">=0.8.0"
+  },
+  "main": "index",
+  "scripts": {
+    "test": "make test"
+  }
+}
