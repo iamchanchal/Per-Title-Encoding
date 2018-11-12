@@ -3,8 +3,6 @@ var commonName = inputVideoFile.split('resource/')[1].split('.')[0];
 var ffmpeg = require('fluent-ffmpeg');
 var fs = require('fs');
 
-var timeOut;
-
 var psnrBitrateList = new Array(24);
 for (var i = 0; i < 24; i++) {
     psnrBitrateList[i] = new Array(2);
@@ -16,7 +14,7 @@ ffmpeg.ffprobe(inputVideoFile, function(err, metadata) {
     resolution = width + "x" + height;
 });
 
-var jsonFile = "../resource/reverse/"+commonName+"json.txt";
+var jsonFile = "../resource/reverse/"+commonName+"json.txt"; //saves all the psnr-bitrate points
 
 function processingInputFile(i,length,breadth,psnrBitrateCounter){
     var outputVideoFile = "../resource/reverse/"+commonName+"IntermediateCRFEncoding"+length+"x"+breadth+"_"+i+".mp4";
@@ -35,7 +33,7 @@ function processingInputFile(i,length,breadth,psnrBitrateCounter){
     }
     console.error = console.log;
 
-//CRF encoding the input file by downscaling and printing PSNR in a text file
+//CRF encoding the input file by downscaling
     var crf = "-crf "+i;
     var resolution = length+"x"+breadth;
     var encoding = ffmpeg(inputVideoFile)
@@ -72,7 +70,7 @@ function y4mcal(i,length,breadth,outputVideoFile,y4mOutput,psnrBitrateCounter) {
     var y4mConversion = ffmpeg(outputVideoFile)
         .addOption('-pix_fmt')
         .addOption('yuv420p')
-        .addOptions('-vsync', '0', '-s', resolution) //need to change the resolution everytime;cant hardcode
+        .addOptions('-vsync', '0', '-s', resolution)
         .outputOption('-sws_flags lanczos')
         .on('start', function (commandLine) {
             console.log('Spawned Ffmpeg with command: ' + commandLine);
@@ -95,7 +93,7 @@ function y4mcal(i,length,breadth,outputVideoFile,y4mOutput,psnrBitrateCounter) {
 
         .save(y4mOutput);
 }
-//Converting raw y4m file to mp4
+//Converting raw y4m file to mp4 upscaling
 function rawTomp4(i,length,breadth,y4mOutput,outputVideoFile,psnrBitrateCounter) {
     var finalOutput = "../resource/reverse/finalUpscaledOutput"+commonName+length+"x"+breadth+"_"+i+".mp4";
     var rawToMP4 = ffmpeg(y4mOutput)
@@ -123,7 +121,7 @@ function rawTomp4(i,length,breadth,y4mOutput,outputVideoFile,psnrBitrateCounter)
 
         .save(finalOutput);
 }
-//method to calculate PSNR by upscaling the output video file and printing PSNR in a text file
+//method to calculate and print PSNR
 function psnrcal(i,length,breadth,y4mOutput,finalOutput,psnrBitrateCounter) {
 
     var psnrAfter = ffmpeg(inputVideoFile)
@@ -170,6 +168,7 @@ function psnrcal(i,length,breadth,y4mOutput,finalOutput,psnrBitrateCounter) {
         .run();
 }
 
+//Encoding input file from CRF 18 to 53 for 480p,720p and 1080p
 function keepItRunning(i,length,breadth,psnrBitrateCounter){
     if(length==640&&breadth==480&&i==53){
         length=1080; breadth=720;i=18;
@@ -196,6 +195,7 @@ function deleteUnusedFile(file) {
     fs.unlinkSync(file);
 }
 
+//method to create chart with convex hull
 function printHullPoints() {
     var fs = require("fs");
 
@@ -229,7 +229,7 @@ function printHullPoints() {
         hull2D[i][0] = hullPoints[0][i][0];
         hull2D[i][1] = hullPoints[0][i][1];
     }
-    //hull2D.push(hullPoints[0]);
+    //popping the redundant convex hull point from the list
     hull2D.pop();
 
     var arr640 = new Array(8);
@@ -254,6 +254,7 @@ function printHullPoints() {
         arr1080[i][1]=psnrBitrateList[k][1];
     }
 
+    //sorting the arrays for highcharts
     arr640 = arr640.sort(function(a,b) {
         return a[0] - b[0];
     });
@@ -420,5 +421,5 @@ function printHullPoints() {
     /***************Highchart End*********************/
 }
 
-//mainFn();
+//main function trigerring encoding process
 processingInputFile(18,640,480,0);
