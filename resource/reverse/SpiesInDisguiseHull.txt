@@ -1,0 +1,9 @@
+Here come the Hull Points
+value of r::0
+HullPSNR:2287530...HullBitrate:51.71603
+HullPSNR:1892673...HullBitrate:42.385463
+HullPSNR:1633792...HullBitrate:34.400818
+HullPSNR:2085115...HullBitrate:39.628879
+HullPSNR:2110781...HullBitrate:40.037651
+HullPSNR:2252734...HullBitrate:49.170906
+HullPSNR:2287530...HullBitrate:51.71603
