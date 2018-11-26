@@ -1,0 +1,53 @@
+{
+  "name": "highcharts-export-clientside",
+  "main": "highcharts-export-clientside.js",
+  "version": "1.1.4",
+  "homepage": "http://a----.github.io/highcharts-export-clientside/",
+  "authors": [
+    "A---- <A----@users.noreply.github.com>"
+  ],
+  "description": "Module for Highcharts to export charts client-side",
+  "moduleType": [
+    "node"
+  ],
+  "keywords": [
+    "highcharts",
+    "export",
+    "charts",
+    "jpeg",
+    "jpg",
+    "png",
+    "pdf",
+    "svg",
+    "csv",
+    "xls"
+  ],
+  "license": "Public Domain",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "example.html"
+  ],
+  "dependencies": {
+    "jspdf": "^1.0.272",
+    "highcharts": "^4.1.1",
+    "export-csv": "https://github.com/highslide-software/export-csv.git"
+  },
+  "devDependencies": {
+    "bootstrap": "^3.3.2",
+    "jquery": "^1.9.0"
+  },
+  "_release": "1.1.4",
+  "_resolution": {
+    "type": "version",
+    "tag": "1.1.4",
+    "commit": "57cae5e15e5b64a6a0cde505bcf31d6da4529278"
+  },
+  "_source": "https://github.com/A----/highcharts-export-clientside.git",
+  "_target": "^1.1.4",
+  "_originalSource": "highcharts-export-clientside",
+  "_direct": true
+}

@@ -1,7 +1,13 @@
-var inputVideoFile = "../resource/TOS30sec.mp4";
+
+
+
+
+var inputVideoFile = "../resource/TOS2min.mp4";
 var commonName = inputVideoFile.split('resource/')[1].split('.')[0];
 var ffmpeg = require('fluent-ffmpeg');
 var fs = require('fs');
+
+var chartFile="";
 
 var psnrBitrateList = new Array(24);
 for (var i = 0; i < 24; i++) {
@@ -223,6 +229,8 @@ function printHullPoints() {
 
     }
 
+
+
     var hull2D = new Array(hullPoints.length);
     for (var i = 0; i < hullPoints[0].length; i++) {
         hull2D[i] = new Array(2);
@@ -232,18 +240,18 @@ function printHullPoints() {
     //popping the redundant convex hull point from the list
     hull2D.pop();
 
-    var arr640 = new Array(8);
+    var arr480 = new Array(8);
     var arr720 = new Array(8);
     var arr1080 = new Array(8);
     for (var i = 0; i < 8; i++) {
-        arr640[i] = new Array(2);
+        arr480[i] = new Array(2);
         arr720[i] = new Array(2);
         arr1080[i] = new Array(2);
     }
 
     for(var i=0;i<8;i++){
-        arr640[i][0]=psnrBitrateList[i][0];
-        arr640[i][1]=psnrBitrateList[i][1];
+        arr480[i][0]=psnrBitrateList[i][0];
+        arr480[i][1]=psnrBitrateList[i][1];
     }
     for(var i=0,j=8;i<8;i++,j++){
         arr720[i][0]=psnrBitrateList[j][0];
@@ -255,7 +263,7 @@ function printHullPoints() {
     }
 
     //sorting the arrays for highcharts
-    arr640 = arr640.sort(function(a,b) {
+    arr480 = arr480.sort(function(a,b) {
         return a[0] - b[0];
     });
     arr720 = arr720.sort(function(a,b) {
@@ -269,9 +277,9 @@ function printHullPoints() {
     });
 
     //print all the arrays to check if they are in ascending order
-    for(var i = 0; i < arr640.length; i++) {
-        for(var z = 0; z < arr640[i].length; z++) {
-            console.log("480p "+arr640[i][z]);
+    for(var i = 0; i < arr480.length; i++) {
+        for(var z = 0; z < arr480[i].length; z++) {
+            console.log("480p "+arr480[i][z]);
         }
     }
     for(var i = 0; i < arr720.length; i++) {
@@ -291,23 +299,204 @@ function printHullPoints() {
     }
 
 
-
     /***************Highchart Start**********************/
-    var jsdom = require('jsdom');
-    var doc = jsdom.jsdom('<!doctype html><html><body><div id="container"></div></body></html>'),
-        win = doc.defaultView;
+ //   var jsdom = require('jsdom');
+    var htmlData2 = `<html>
+<head>
+    <title>Highcharts Client-Side Export module</title>
 
-    doc.createElementNS = function (ns, tagName) {
-        var elem = doc.createElement(tagName);
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css" />
+   
+</head>
+<body>
+<div class="container">
+    <h1>Highcharts Client-Side Export module</h1>
+
+    <div class="highcharts-container" id="example-1"></div>
+
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/highcharts/highcharts.js"></script>
+    <script src="bower_components/highcharts/modules/exporting.js"></script>
+    <script src="bower_components/highcharts/modules/canvas-tools.js"></script>
+    <script src="bower_components/export-csv/export-csv.js"></script>
+    <script src="bower_components/jspdf/dist/jspdf.min.js"></script>
+
+    <script src="bower_components/highcharts-export-clientside/highcharts-export-clientside.js"></script>
+
+    <script>
+        $(".browser-support *[data-type]").each(function() {
+            var jThis = $(this);
+            if(Highcharts.exporting.supports(jThis.data("type"))) {
+                jThis.addClass("text-success");
+                jThis.html('<span class="glyphicon glyphicon-ok"></span>');
+            }
+            else {
+                jThis.addClass("text-danger");
+                jThis.html('<span class="glyphicon glyphicon-remove"></span>');
+            }
+        });
+    </script>
+
+    <script>
+        $('#example-1').highcharts({
+            title: {
+                text: 'Bitrate-PSNR'
+
+            },
+            xAxis: {title: {
+                    text: 'BITRATE'
+                }
+
+            },
+            yAxis: {
+                title: {
+                    text: 'PSNR'
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1
+
+                }]
+            },
+            tooltip: {
+                valueSuffix: '°C'
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'middle',
+                borderWidth: 0
+            },
+            colors: ['#FF2714', '#FFFB37','#71FF27','#3C8EFF'],
+            series: [{
+                name: '480p',
+                data:${arr480}
+            }, {
+                name: '720p',
+                data:${arr720}
+            }, {
+                    name: '1080p',
+                    data:${arr1080}
+                }, {
+                    name: 'Convex Hull',
+                    data:${hull2D}
+                }]
+        });
+    </script>
+
+</div>
+</body>
+</html>`;
+   var htmlData = "<html>\n" +
+        "<head>\n" +
+        "    <title>Highcharts Client-Side Export module</title>\n" +
+        "\n" +
+        "    <meta charset=\"UTF-8\">\n" +
+        "\n" +
+        "    <link rel=\"stylesheet\" type=\"text/css\" href=\"bower_components/bootstrap/dist/css/bootstrap.min.css\" />\n" +
+        "   \n" +
+        "</head>\n" +
+        "<body>\n" +
+        "<div class=\"container\">\n" +
+        "    <h1>Highcharts Client-Side Export module</h1>\n" +
+        "\n" +
+        "    <div class=\"highcharts-container\" id=\"example-1\"></div>\n" +
+        "\n" +
+        "\n" +
+        "    <script src=\"bower_components/jquery/dist/jquery.min.js\"></script>\n" +
+        "    <script src=\"bower_components/highcharts/highcharts.js\"></script>\n" +
+        "    <script src=\"bower_components/highcharts/modules/exporting.js\"></script>\n" +
+        "    <script src=\"bower_components/highcharts/modules/canvas-tools.js\"></script>\n" +
+        "    <script src=\"bower_components/export-csv/export-csv.js\"></script>\n" +
+        "    <script src=\"bower_components/jspdf/dist/jspdf.min.js\"></script>\n" +
+        "\n" +
+        "    <script src=\"bower_components/highcharts-export-clientside/highcharts-export-clientside.js\"></script>\n" +
+        "\n" +
+        "    <script>\n" +
+        "        $(\".browser-support *[data-type]\").each(function() {\n" +
+        "            var jThis = $(this);\n" +
+        "            if(Highcharts.exporting.supports(jThis.data(\"type\"))) {\n" +
+        "                jThis.addClass(\"text-success\");\n" +
+        "                jThis.html('<span class=\"glyphicon glyphicon-ok\"></span>');\n" +
+        "            }\n" +
+        "            else {\n" +
+        "                jThis.addClass(\"text-danger\");\n" +
+        "                jThis.html('<span class=\"glyphicon glyphicon-remove\"></span>');\n" +
+        "            }\n" +
+        "        });\n" +
+        "    </script>\n" +
+        "\n" +
+        "    <script>\n" +
+        "        $('#example-1').highcharts({\n" +
+        "            title: {\n" +
+        "                text: 'Bitrate-PSNR'\n" +
+        "\n" +
+        "            },\n" +
+        "            xAxis: {title: {\n" +
+        "                    text: 'BITRATE'\n" +
+        "                }\n" +
+        "\n" +
+        "            },\n" +
+        "            yAxis: {\n" +
+        "                title: {\n" +
+        "                    text: 'PSNR'\n" +
+        "                },\n" +
+        "                plotLines: [{\n" +
+        "                    value: 0,\n" +
+        "                    width: 1\n" +
+        "\n" +
+        "                }]\n" +
+        "            },\n" +
+        "            tooltip: {\n" +
+        "                valueSuffix: '°C'\n" +
+        "            },\n" +
+        "            legend: {\n" +
+        "                layout: 'vertical',\n" +
+        "                align: 'right',\n" +
+        "                verticalAlign: 'middle',\n" +
+        "                borderWidth: 0\n" +
+        "            },\n" +
+        "            colors: ['#FF2714', '#FFFB37','#71FF27','#3C8EFF'],\n" +
+        "            series: [{\n" +
+        "                name: '480p',\n" +
+        "                data:"+JSON.stringify(arr480)+"\n" +
+        "            }, {\n" +
+        "                name: '720p',\n" +
+        "                data:"+JSON.stringify(arr720)+"\n" +
+        "            }, {\n" +
+        "                    name: '1080p',\n" +
+        "                    data:"+JSON.stringify(arr1080)+"\n" +
+        "                }, {\n" +
+        "                    name: 'Convex Hull',\n" +
+        "                    data:"+JSON.stringify(hull2D)+"\n" +
+        "                }]\n" +
+        "        });\n" +
+        "    </script>\n" +
+        "\n" +
+        "</div>\n" +
+        "</body>\n" +
+        "</html>";
+
+
+    chartFile=commonName+".html";
+    fs.writeFile(chartFile,htmlData, function () {
+        console.log('Wrote html file');
+    });
+     // var  window = document.defaultView;
+
+  /*  document.createElementNS = function (ns, tagName) {
+        var elem = document.createElement(tagName);
 
         // Set private namespace to satisfy jsdom's getter
         elem._namespaceURI = ns; // eslint-disable-line no-underscore-dangle
-        /**
+        /!**
          * Pass Highcharts' test for SVG capabilities
          * @returns {undefined}
-         */
+         *!/
         elem.createSVGRect = function () {};
-        /**
+        /!**
          * jsdom doesn't compute layout (see https://github.com/tmpvar/jsdom/issues/135).
          * This getBBox implementation provides just enough information to get Highcharts
          * to render text boxes correctly, and is not intended to work like a general
@@ -317,7 +506,7 @@ function printHullPoints() {
          * For a more exact result we could to create a map over glyph widths for several
          * fonts and sizes, but it may not be necessary for the purpose.
          * @returns {Object} The bounding box
-         */
+         *!/
         elem.getBBox = function () {
             var lineWidth = 0,
                 width = 0,
@@ -361,11 +550,11 @@ function printHullPoints() {
             };
         };
         return elem;
-    };
+    };*/
 
-    var Highcharts = require('highcharts')(win);
+   /* var Highcharts = require('highcharts');
 
-    Highcharts.chart('container', {
+ var testChart=   Highcharts.Chart('container', {
         chart: {
             type: 'spline'
         },
@@ -413,13 +602,41 @@ function printHullPoints() {
                 data:hull2D
             }]
     });
-    var svg = win.document.getElementById('container').innerHTML;
+   document.getElementById('container').innerHTML = testChart;
+   var svg = document.getElementById('container').innerHTML;
     var chartFile="../resource/HullCharts/"+commonName+".svg";
     fs.writeFile(chartFile, svg, function () {
         console.log('Wrote ' + svg.length + ' bytes to ' +commonName+'.svg.');
-    });
+    });*/
     /***************Highchart End*********************/
+
+
 }
 
 //main function trigerring encoding process
-processingInputFile(18,640,480,0);
+//processingInputFile(18,640,480,0);
+
+var express = require('express');
+var app = express();
+var path = require('path');
+
+app.use(express.static('public'));
+app.use(express.static('images'));
+
+app.get('/', function(req, res){
+    res.send("Please enter data");
+});
+
+app.get('/start', function(req, res){
+    res.send("Start");
+    processingInputFile(18,640,480,0);
+});
+
+
+app.get('/chart', function(req, res){
+    res.sendFile(path.join(__dirname + '/'+chartFile));
+});
+
+
+
+app.listen(3000);
