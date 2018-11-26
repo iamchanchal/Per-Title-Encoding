@@ -341,6 +341,9 @@ function printHullPoints() {
 
     <script>
         $('#example-1').highcharts({
+            chart: {
+                type: 'spline'
+            },
             title: {
                 text: 'Bitrate-PSNR'
 
