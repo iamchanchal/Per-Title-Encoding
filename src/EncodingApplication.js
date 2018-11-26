@@ -2,7 +2,7 @@
 
 
 
-var inputVideoFile = "../resource/TOS2min.mp4";
+var inputVideoFile = "../resource/SpiesInDisguise.mp4";
 var commonName = inputVideoFile.split('resource/')[1].split('.')[0];
 var ffmpeg = require('fluent-ffmpeg');
 var fs = require('fs');
@@ -28,13 +28,13 @@ function processingInputFile(i,length,breadth,psnrBitrateCounter){
 
 
 //saving console log message in a text file
-    var logFile = "../resource/log"+commonName+length+"x"+breadth+"_"+i+".txt";
+ //   var logFile = "../resource/log"+commonName+length+"x"+breadth+"_"+i+".txt";
 
     var util = require('util');
-    var logFile = fs.createWriteStream(logFile, { flags: 'a' });
+ //   var logFile = fs.createWriteStream(logFile, { flags: 'a' });
     var logStdout = process.stdout;
     console.log = function () {
-        logFile.write(util.format.apply(null, arguments) + '\n');
+       // logFile.write(util.format.apply(null, arguments) + '\n');
         logStdout.write(util.format.apply(null, arguments) + '\n');
     }
     console.error = console.log;
@@ -101,7 +101,7 @@ function y4mcal(i,length,breadth,outputVideoFile,y4mOutput,psnrBitrateCounter) {
 }
 //Converting raw y4m file to mp4 upscaling
 function rawTomp4(i,length,breadth,y4mOutput,outputVideoFile,psnrBitrateCounter) {
-    var finalOutput = "../resource/reverse/finalUpscaledOutput"+commonName+length+"x"+breadth+"_"+i+".mp4";
+    var finalOutput = "../resource/reverse/"+commonName+"FinalUpscaledOutput"+length+"x"+breadth+"_"+i+".mp4";
     var rawToMP4 = ffmpeg(y4mOutput)
         .addOption('-c:v libx264')
         .on('start', function(commandLine) {
@@ -160,6 +160,7 @@ function psnrcal(i,length,breadth,y4mOutput,finalOutput,psnrBitrateCounter) {
                 psnrBitrateList[psnrBitrateCounter][1] = parseFloat(averagePSNR[1]);
                 jsonstream.write("PSNR"+length+"x"+breadth+"_"+i+":"+psnrBitrateList[psnrBitrateCounter][0] + "...Bitrate"+length+"x"+breadth+"_"+i+":"+ psnrBitrateList[psnrBitrateCounter][1] + "\n");
                 deleteUnusedFile(y4mOutput);
+                deleteUnusedFile(finalOutput);
                 if(psnrBitrateCounter==23){
                     printHullPoints();
                 }
