@@ -1,0 +1,89 @@
+<html>
+<head>
+    <title>Highcharts Client-Side Export module</title>
+
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css" />
+   
+</head>
+<body>
+<div class="container">
+    <h1>Highcharts Client-Side Export module</h1>
+
+    <div class="highcharts-container" id="example-1"></div>
+
+
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/highcharts/highcharts.js"></script>
+    <script src="bower_components/highcharts/modules/exporting.js"></script>
+    <script src="bower_components/highcharts/modules/canvas-tools.js"></script>
+    <script src="bower_components/export-csv/export-csv.js"></script>
+    <script src="bower_components/jspdf/dist/jspdf.min.js"></script>
+
+    <script src="bower_components/highcharts-export-clientside/highcharts-export-clientside.js"></script>
+
+    <script>
+        $(".browser-support *[data-type]").each(function() {
+            var jThis = $(this);
+            if(Highcharts.exporting.supports(jThis.data("type"))) {
+                jThis.addClass("text-success");
+                jThis.html('<span class="glyphicon glyphicon-ok"></span>');
+            }
+            else {
+                jThis.addClass("text-danger");
+                jThis.html('<span class="glyphicon glyphicon-remove"></span>');
+            }
+        });
+    </script>
+
+    <script>
+        $('#example-1').highcharts({
+            title: {
+                text: 'Bitrate-PSNR'
+
+            },
+            xAxis: {title: {
+                    text: 'BITRATE'
+                }
+
+            },
+            yAxis: {
+                title: {
+                    text: 'PSNR'
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1
+
+                }]
+            },
+            tooltip: {
+                valueSuffix: '°C'
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'middle',
+                borderWidth: 0
+            },
+            colors: ['#FF2714', '#FFFB37','#71FF27','#3C8EFF'],
+            series: [{
+                name: '480p',
+                data:[[1174138,23.750231],[1470525,24.183791],[1725696,24.637282],[1998851,24.800932],[2302661,24.868233],[2556439,24.890105],[2766186,24.895179],[2893318,24.8889]]
+            }, {
+                name: '720p',
+                data:[[1601378,24.354506],[1865358,24.602881],[2074011,24.79742],[2520613,24.860982],[2577834,24.86611],[2778727,24.853103],[2908160,24.842738],[3006214,24.831584]]
+            }, {
+                    name: '1080p',
+                    data:[[1937595,24.650917],[2047311,24.74648],[2195954,24.862712],[2398221,24.867673],[2606970,24.849136],[2827558,24.832915],[3032435,24.818446],[3175328,24.808144]]
+                }, {
+                    name: 'Convex Hull',
+                    data:[[1174138,23.750231],[1725696,24.637282],[1998851,24.800932],[2195954,24.862712],[2556439,24.890105],[2766186,24.895179],[2893318,24.8889],[3175328,24.808144]]
+                }]
+        });
+    </script>
+
+</div>
+</body>
+</html>

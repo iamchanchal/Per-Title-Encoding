@@ -2,7 +2,7 @@
 
 
 
-var inputVideoFile = "../resource/SpiesInDisguise.mp4";
+var inputVideoFile = "../resource/MonsterParty.mp4";
 var commonName = inputVideoFile.split('resource/')[1].split('.')[0];
 var ffmpeg = require('fluent-ffmpeg');
 var fs = require('fs');
@@ -302,7 +302,7 @@ function printHullPoints() {
 
     /***************Highchart Start**********************/
  //   var jsdom = require('jsdom');
-    var htmlData2 = `<html>
+/*    var htmlData2 = `<html>
 <head>
     <title>Highcharts Client-Side Export module</title>
 
@@ -392,7 +392,7 @@ function printHullPoints() {
 
 </div>
 </body>
-</html>`;
+</html>`;*/
    var htmlData = "<html>\n" +
         "<head>\n" +
         "    <title>Highcharts Client-Side Export module</title>\n" +
@@ -436,6 +436,10 @@ function printHullPoints() {
         "        $('#example-1').highcharts({\n" +
         "            title: {\n" +
         "                text: 'Bitrate-PSNR'\n" +
+        "\n" +
+        "            },\n" +
+        "            chart: {\n" +
+        "                type: 'spline'\n" +
         "\n" +
         "            },\n" +
         "            xAxis: {title: {\n" +
