@@ -2,7 +2,7 @@
 
 
 
-var inputVideoFile = "../resource/BigKill1min.mp4";
+var inputVideoFile = "../resource/BBB2min.mp4";
 var commonName = inputVideoFile.split('resource/')[1].split('.')[0];
 var ffmpeg = require('fluent-ffmpeg');
 var fs = require('fs');
@@ -94,13 +94,14 @@ function y4mcal(i,length,breadth,outputVideoFile,y4mOutput,psnrBitrateCounter) {
         .on('end', function (err, stdout, stderr) {
             console.log('Processing CRF encoding finished !');
             console.log(JSON.stringify(stdout, null, " "));
-            rawTomp4(i,length,breadth,y4mOutput,outputVideoFile,psnrBitrateCounter);
+            //rawTomp4(i,length,breadth,y4mOutput,outputVideoFile,psnrBitrateCounter);
+            psnrcal(i,length,breadth,outputVideoFile,y4mOutput,psnrBitrateCounter);
         })
 
         .save(y4mOutput);
 }
 //Converting raw y4m file to mp4 upscaling
-function rawTomp4(i,length,breadth,y4mOutput,outputVideoFile,psnrBitrateCounter) {
+/*function rawTomp4(i,length,breadth,y4mOutput,outputVideoFile,psnrBitrateCounter) {
     var finalOutput = "../resource/reverse/"+commonName+"FinalUpscaledOutput"+length+"x"+breadth+"_"+i+".mp4";
     var rawToMP4 = ffmpeg(y4mOutput)
         .addOption('-c:v libx264')
@@ -126,9 +127,9 @@ function rawTomp4(i,length,breadth,y4mOutput,outputVideoFile,psnrBitrateCounter)
         })
 
         .save(finalOutput);
-}
+}*/
 //method to calculate and print PSNR
-function psnrcal(i,length,breadth,outputVideoFile,y4mOutput,finalOutput,psnrBitrateCounter) {
+function psnrcal(i,length,breadth,outputVideoFile,y4mOutput,psnrBitrateCounter) {
 
     var psnrAfter = ffmpeg(inputVideoFile)
         .input(y4mOutput)
@@ -177,16 +178,16 @@ function psnrcal(i,length,breadth,outputVideoFile,y4mOutput,finalOutput,psnrBitr
 
 //Encoding input file from CRF 18 to 53 for 480p,720p and 1080p
 function keepItRunning(i,length,breadth,psnrBitrateCounter){
-    if(length==640&&breadth==480&&i==55){
-        length=1080; breadth=720;i=20;
+    if(length==640&&breadth==480&&i==53){
+        length=1080; breadth=720;i=18;
         processingInputFile(i,length,breadth,psnrBitrateCounter+1);
     }
-    else if(length==1080&&breadth==720&&i==55)
+    else if(length==1080&&breadth==720&&i==53)
     {
-        length=1920; breadth=1080;i=20;
+        length=1920; breadth=1080;i=18;
         processingInputFile(i,length,breadth,psnrBitrateCounter+1);
     }
-    else if (length==1920&&breadth==1080&&i==55) {
+    else if (length==1920&&breadth==1080&&i==53) {
         return 1;
     }
     else{
@@ -634,7 +635,7 @@ app.get('/', function(req, res){
 
 app.get('/start', function(req, res){
     res.send("Start");
-    processingInputFile(20,640,480,0);
+    processingInputFile(18,640,480,0);
 });
 
 
