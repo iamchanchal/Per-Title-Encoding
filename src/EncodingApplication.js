@@ -2,7 +2,7 @@
 
 
 
-var inputVideoFile = "../resource/MonsterParty.mp4";
+var inputVideoFile = "../resource/BigKill1min.mp4";
 var commonName = inputVideoFile.split('resource/')[1].split('.')[0];
 var ffmpeg = require('fluent-ffmpeg');
 var fs = require('fs');
@@ -20,7 +20,7 @@ ffmpeg.ffprobe(inputVideoFile, function(err, metadata) {
     resolution = width + "x" + height;
 });
 
-var jsonFile = "../resource/reverse/"+commonName+"json.txt"; //saves all the psnr-bitrate points
+var jsonFile = "../resource/reverse/"+commonName+"json1.txt"; //saves all the psnr-bitrate points
 
 function processingInputFile(i,length,breadth,psnrBitrateCounter){
     var outputVideoFile = "../resource/reverse/"+commonName+"IntermediateCRFEncoding"+length+"x"+breadth+"_"+i+".mp4";
@@ -121,14 +121,14 @@ function rawTomp4(i,length,breadth,y4mOutput,outputVideoFile,psnrBitrateCounter)
             console.log('Processing CRF encoding finished !');
             console.log(JSON.stringify(stdout, null, " "));
             //deleteUnusedFile(outputVideoFile);
-            psnrcal(i,length,breadth,y4mOutput,finalOutput,psnrBitrateCounter);
+            psnrcal(i,length,breadth,outputVideoFile,y4mOutput,finalOutput,psnrBitrateCounter);
 
         })
 
         .save(finalOutput);
 }
 //method to calculate and print PSNR
-function psnrcal(i,length,breadth,y4mOutput,finalOutput,psnrBitrateCounter) {
+function psnrcal(i,length,breadth,outputVideoFile,y4mOutput,finalOutput,psnrBitrateCounter) {
 
     var psnrAfter = ffmpeg(inputVideoFile)
         .input(y4mOutput)
@@ -151,16 +151,16 @@ function psnrcal(i,length,breadth,y4mOutput,finalOutput,psnrBitrateCounter) {
             console.log('Processing for PSNR finished !');
 
             console.log(JSON.stringify(stdout, null, " "));
-            var averagePSNR = JSON.stringify(stdout, null, " ").match("average:(.*)min:");
+            var averagePSNR = JSON.stringify(stdout, null, " ").match("y:(.*)u:");
             var fs = require("fs");
-            var psnrFile = "../resource/reverse/"+commonName+"PSNR"+length+"x"+breadth+"_"+i+".txt";
+            var psnrFile = "../resource/reverse/"+commonName+"1PSNR"+length+"x"+breadth+"_"+i+".txt";
             var jsonstream = fs.createWriteStream(jsonFile, {flags: 'a'});
-            ffmpeg.ffprobe(finalOutput, function(err, metadata) {
+            ffmpeg.ffprobe(outputVideoFile, function(err, metadata) {
                 psnrBitrateList[psnrBitrateCounter][0] = metadata.streams[0].bit_rate;
                 psnrBitrateList[psnrBitrateCounter][1] = parseFloat(averagePSNR[1]);
                 jsonstream.write("PSNR"+length+"x"+breadth+"_"+i+":"+psnrBitrateList[psnrBitrateCounter][0] + "...Bitrate"+length+"x"+breadth+"_"+i+":"+ psnrBitrateList[psnrBitrateCounter][1] + "\n");
                 deleteUnusedFile(y4mOutput);
-                deleteUnusedFile(finalOutput);
+               // deleteUnusedFile(finalOutput);
                 if(psnrBitrateCounter==23){
                     printHullPoints();
                 }
@@ -177,16 +177,16 @@ function psnrcal(i,length,breadth,y4mOutput,finalOutput,psnrBitrateCounter) {
 
 //Encoding input file from CRF 18 to 53 for 480p,720p and 1080p
 function keepItRunning(i,length,breadth,psnrBitrateCounter){
-    if(length==640&&breadth==480&&i==53){
-        length=1080; breadth=720;i=18;
+    if(length==640&&breadth==480&&i==55){
+        length=1080; breadth=720;i=20;
         processingInputFile(i,length,breadth,psnrBitrateCounter+1);
     }
-    else if(length==1080&&breadth==720&&i==53)
+    else if(length==1080&&breadth==720&&i==55)
     {
-        length=1920; breadth=1080;i=18;
+        length=1920; breadth=1080;i=20;
         processingInputFile(i,length,breadth,psnrBitrateCounter+1);
     }
-    else if (length==1920&&breadth==1080&&i==53) {
+    else if (length==1920&&breadth==1080&&i==55) {
         return 1;
     }
     else{
@@ -457,9 +457,6 @@ function printHullPoints() {
         "\n" +
         "                }]\n" +
         "            },\n" +
-        "            tooltip: {\n" +
-        "                valueSuffix: '°C'\n" +
-        "            },\n" +
         "            legend: {\n" +
         "                layout: 'vertical',\n" +
         "                align: 'right',\n" +
@@ -488,7 +485,7 @@ function printHullPoints() {
         "</html>";
 
 
-    chartFile=commonName+".html";
+    chartFile=commonName+"1.html";
     fs.writeFile(chartFile,htmlData, function () {
         console.log('Wrote html file');
     });
@@ -637,7 +634,7 @@ app.get('/', function(req, res){
 
 app.get('/start', function(req, res){
     res.send("Start");
-    processingInputFile(18,640,480,0);
+    processingInputFile(20,640,480,0);
 });
 
 
