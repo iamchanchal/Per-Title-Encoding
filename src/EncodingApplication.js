@@ -769,6 +769,8 @@ app.get('/chart', function(req, res){
 });
 
 app.get('/ladder', function(req, res){
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename=' + excelFile);
     res.sendFile(path.join(__dirname + '/'+excelFile));
 });
 
