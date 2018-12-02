@@ -2,7 +2,7 @@
 
 
 
-var inputVideoFile = "../resource/TOS3sec.mp4";
+var inputVideoFile = "../resource/Fantastic_Four_2015_Trailer_3_Intl_5.1-1080p-HDTN.mp4";
 var commonName = inputVideoFile.split('resource/')[1].split('.')[0];
 var ffmpeg = require('fluent-ffmpeg');
 var fs = require('fs');
