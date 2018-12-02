@@ -2,12 +2,13 @@
 
 
 
-var inputVideoFile = "../resource/BBB2min.mp4";
+var inputVideoFile = "../resource/TOS3sec.mp4";
 var commonName = inputVideoFile.split('resource/')[1].split('.')[0];
 var ffmpeg = require('fluent-ffmpeg');
 var fs = require('fs');
 
 var chartFile="";
+var excelFile = "";
 
 var psnrBitrateList = new Array(24);
 for (var i = 0; i < 24; i++) {
@@ -299,6 +300,130 @@ function printHullPoints() {
             console.log("Hull "+hull2D[i][z]);
         }
     }
+
+
+
+    /***************Printing the bitrate ladder in an excel file*********************/
+    var excelbuilder = require('msexcel-builder');
+
+    excelFile = commonName+".xlsx";
+    var workbook = excelbuilder.createWorkbook('./',excelFile);
+
+
+   // var arr480 = [[28945,28.490706],[38651,30.090431],[60769,32.572187],[96959,34.725321],[159917,36.473845],[273488,37.825566],[491002,38.745833],[942362,39.311826]];
+
+  //  var arr720 = [[62902,29.795643],[84558,31.715869],[130925,34.690483],[205902,37.368279],[336355,39.741429],[575913,41.767758],[1071436,43.34032],[2245851,44.430976]];
+
+ //   var arr1080 = [[150743,31.114414],[200386,33.311901],[307115,36.719714],[471994,39.833949],[764677,42.694389],[1342789,45.292969],[2717142,47.547582],[6331813,49.630586]];
+
+//    var hull2D = [[28945,28.490706],[38651,30.090431],[60769,32.572187],[96959,34.725321],[159917,36.473845],[205902,37.368279],[336355,39.741429],[575913,41.767758],[764677,42.694389],[1342789,45.292969],[2717142,47.547582],[6331813,49.630586]];
+
+    var bitrateLadderArray = new Array(3);
+    for (var x=0;x<3;x++){
+        bitrateLadderArray[x] = new Array(3);
+    }
+
+    var arr480min = Math.abs(arr480[0][0]-hull2D[0][0]);
+    for(var x = 0; x < arr480.length; x++){
+        var counter = 0;
+        for(var y = 0; y < hull2D.length; y++){
+            if(arr480[x][0] == hull2D[y][0] && arr480[x][1] == hull2D[y][1]){
+                bitrateLadderArray[0][0]= "480p";
+                bitrateLadderArray[0][1]=hull2D[y][0];
+                bitrateLadderArray[0][2]=hull2D[y][1];
+                counter++;
+                break;
+            }
+            else if((Math.abs(arr480[x][0]-hull2D[y][0])<arr480min)){
+                bitrateLadderArray[0][0]= "480p";
+                if(hull2D[y][1]>arr480[x][1]) {
+                    bitrateLadderArray[0][1] = hull2D[y][0];
+                    bitrateLadderArray[0][2] = hull2D[y][1];
+                }else{
+                    bitrateLadderArray[0][1] = arr480[x][0];
+                    bitrateLadderArray[0][2] = arr480[x][1];
+                }
+            }
+        }
+        if(counter!=0){
+            break;
+        }
+    }
+    console.log("New bitrate for 480p: "+bitrateLadderArray[0][1]+","+bitrateLadderArray[0][2]);
+
+    var arr720min = Math.abs(arr720[0][0]-hull2D[0][0]);
+    for(var x = 0; x < arr720.length; x++){
+        var counter = 0;
+        for(var y = 0; y < hull2D.length; y++){
+            if(arr720[x][0] == hull2D[y][0] && arr720[x][1] == hull2D[y][1]){
+                bitrateLadderArray[1][0]= "720p";
+                bitrateLadderArray[1][1]=hull2D[y][0];
+                bitrateLadderArray[1][2]=hull2D[y][1];
+                counter++;
+                break;
+            }
+            else if((Math.abs(arr720[x][0]-hull2D[y][0])<arr720min)){
+                bitrateLadderArray[1][0]= "720p";
+                if(hull2D[y][1]>arr720[x][1]) {
+                    bitrateLadderArray[1][1] = hull2D[y][0];
+                    bitrateLadderArray[1][2] = hull2D[y][1];
+                }else{
+                    bitrateLadderArray[1][1] = arr720[x][0];
+                    bitrateLadderArray[1][2] = arr720[x][1];
+                }
+            }
+        }
+        if(counter!=0){
+            break;
+        }
+    }
+    console.log("New bitrate for 720p: "+bitrateLadderArray[1][1]+","+bitrateLadderArray[1][2]);
+
+    var arr1080min = Math.abs(arr1080[0][0]-hull2D[0][0]);
+    for(var x = 0; x < arr1080.length; x++){
+        var counter = 0;
+        for(var y = 0; y < hull2D.length; y++){
+            if(arr1080[x][0] == hull2D[y][0] && arr1080[x][1] == hull2D[y][1]){
+                bitrateLadderArray[2][0]= "1080p";
+                bitrateLadderArray[2][1]=hull2D[y][0];
+                bitrateLadderArray[2][2]=hull2D[y][1];
+                counter++;
+                break;
+            }else if((Math.abs(arr1080[x][0]-hull2D[y][0])<arr1080min)){
+                bitrateLadderArray[2][0]= "720p";
+                if(hull2D[y][1]>arr1080[x][1]) {
+                    bitrateLadderArray[2][1] = hull2D[y][0];
+                    bitrateLadderArray[2][2] = hull2D[y][1];
+                }else{
+                    bitrateLadderArray[2][1] = arr720[x][0];
+                    bitrateLadderArray[2][2] = arr720[x][1];
+                }
+            }
+        }
+        if(counter!=0){
+            break;
+        }
+    }
+    console.log("New bitrate for 1080p: "+bitrateLadderArray[2][1]+","+bitrateLadderArray[2][2]);
+
+    console.log(bitrateLadderArray);
+
+    var sheet1 = workbook.createSheet('sheet1', 4, 4);
+    sheet1.set(1, 1, 'Quality');
+    sheet1.set(2, 1, 'Bitrate');
+    sheet1.set(3, 1, 'PSNR');
+    for (var row = 0; row < 3; row++) {
+        for(var col=0;col<3;col++)
+            sheet1.set(col+1, row+2, bitrateLadderArray[row][col]);
+    }
+
+    workbook.save(function(err){
+        if (err)
+            throw err;
+        else
+            console.log('The Bitrate ladder was successfully created and saved in an excel file');
+    });
+    /**********excel printing finished**************************/
 
 
     /***************Highchart Start**********************/
@@ -641,6 +766,10 @@ app.get('/start', function(req, res){
 
 app.get('/chart', function(req, res){
     res.sendFile(path.join(__dirname + '/'+chartFile));
+});
+
+app.get('/ladder', function(req, res){
+    res.sendFile(path.join(__dirname + '/'+excelFile));
 });
 
 
