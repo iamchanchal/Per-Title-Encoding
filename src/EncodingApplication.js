@@ -473,10 +473,6 @@ var path = require('path');
 app.use(express.static('public'));
 app.use(express.static('images'));
 
-app.get('/', function(req, res){
-    res.send("Please enter data");
-});
-
 app.get('/start', function(req, res){
     res.send("Start");
     processingInputFile(18,640,480,0);
@@ -487,7 +483,7 @@ app.get('/chart', function(req, res){
     res.sendFile(path.join(__dirname + '/'+chartFile));
 });
 
-app.get('/ladder', function(req, res){
+app.get('/bitrateladder', function(req, res){
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.setHeader('Content-Disposition', 'attachment; filename=' + excelFile);
     res.sendFile(path.join(__dirname + '/'+excelFile));
