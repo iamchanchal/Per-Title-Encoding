@@ -1,4 +1,4 @@
-var inputVideoFile = "../resource/TOS3sec.mp4";
+var inputVideoFile = "../resource/Sparks2min.mp4";
 var commonName = inputVideoFile.split('resource/')[1].split('.')[0];
 var ffmpeg = require('fluent-ffmpeg');
 var fs = require('fs');
@@ -256,7 +256,7 @@ function printHullPoints() {
 
    var htmlData = "<html>\n" +
         "<head>\n" +
-        "    <title>Highcharts Client-Side Export module</title>\n" +
+        "    <title>Encoding plots for "+commonName+"</title>\n" +
         "\n" +
         "    <meta charset=\"UTF-8\">\n" +
         "\n" +
@@ -265,9 +265,9 @@ function printHullPoints() {
         "</head>\n" +
         "<body>\n" +
         "<div class=\"container\">\n" +
-        "    <h1>Highcharts Client-Side Export module</h1>\n" +
+        "    <h1>Encoding plots for "+commonName+"</h1>\n" +
         "\n" +
-        "    <div class=\"highcharts-container\" id=\"example-1\"></div>\n" +
+        "    <div class=\"highcharts-container\" id=\"encodedChart\"></div>\n" +
         "\n" +
         "\n" +
         "    <script src=\"bower_components/jquery/dist/jquery.min.js\"></script>\n" +
@@ -294,7 +294,7 @@ function printHullPoints() {
         "    </script>\n" +
         "\n" +
         "    <script>\n" +
-        "        $('#example-1').highcharts({\n" +
+        "        $('#encodedChart').highcharts({\n" +
         "            title: {\n" +
         "                text: 'Bitrate-PSNR'\n" +
         "\n" +
@@ -337,7 +337,11 @@ function printHullPoints() {
         "                }, {\n" +
         "                    name: 'Convex Hull',\n" +
         "                    data:"+JSON.stringify(hull2D)+"\n" +
-        "                }]\n" +
+        "                }],\n" +
+       "            exporting: {\n" +
+       "                filename: '"+commonName+"'\n" +
+       "\n" +
+       "            }\n" +
         "        });\n" +
         "    </script>\n" +
         "\n" +
@@ -474,7 +478,7 @@ app.use(express.static('public'));
 app.use(express.static('images'));
 
 app.get('/start', function(req, res){
-    res.send("Start");
+    res.send("Encoding has begun..");
     processingInputFile(18,640,480,0);
 });
 
