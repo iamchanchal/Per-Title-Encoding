@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>Highcharts Client-Side Export module</title>
+    <title>Encoding plots for Sparks2min</title>
 
     <meta charset="UTF-8">
 
@@ -9,9 +9,9 @@
 </head>
 <body>
 <div class="container">
-    <h1>Highcharts Client-Side Export module</h1>
+    <h1>Encoding plots for Sparks2min</h1>
 
-    <div class="highcharts-container" id="example-1"></div>
+    <div class="highcharts-container" id="encodedChart"></div>
 
 
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
@@ -38,7 +38,7 @@
     </script>
 
     <script>
-        $('#example-1').highcharts({
+        $('#encodedChart').highcharts({
             title: {
                 text: 'Bitrate-PSNR'
 
@@ -81,7 +81,11 @@
                 }, {
                     name: 'Convex Hull',
                     data:[[40515,23.627631],[50814,24.331528],[93946,25.911887],[179687,27.500379],[370675,29.059504],[840133,30.608728],[936998,30.849005],[2035974,32.884772],[4836272,35.578468],[9288460,37.889806],[17654767,39.739442]]
-                }]
+                }],
+            exporting: {
+                filename: 'Sparks2min'
+
+            }
         });
     </script>
 
