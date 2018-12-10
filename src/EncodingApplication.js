@@ -1,4 +1,4 @@
-var inputVideoFile = "../resource/Sparks2min.mp4";
+var inputVideoFile = "../resource/CosmosLaundromat2min.mp4";
 var commonName = inputVideoFile.split('resource/')[1].split('.')[0];
 var ffmpeg = require('fluent-ffmpeg');
 var fs = require('fs');
@@ -6,8 +6,8 @@ var fs = require('fs');
 var chartFile="";
 var excelFile = "";
 
-var psnrBitrateList = new Array(24);
-for (var i = 0; i < 24; i++) {
+var psnrBitrateList = new Array(35);
+for (var i = 0; i < 35; i++) {
     psnrBitrateList[i] = new Array(2);
 }
 var width; var height; var resolution;
@@ -17,7 +17,7 @@ ffmpeg.ffprobe(inputVideoFile, function(err, metadata) {
     resolution = width + "x" + height;
 });
 
-var jsonFile = "../resource/reverse/"+commonName+"json1.txt"; //saves all the psnr-bitrate points
+var jsonFile = "../resource/reverse/"+commonName+"json2.txt"; //saves all the psnr-bitrate points
 
 function processingInputFile(i,length,breadth,psnrBitrateCounter){
     var outputVideoFile = "../resource/reverse/"+commonName+"IntermediateCRFEncoding"+length+"x"+breadth+"_"+i+".mp4";
@@ -122,7 +122,7 @@ function psnrcal(i,length,breadth,outputVideoFile,y4mOutput,psnrBitrateCounter) 
                 psnrBitrateList[psnrBitrateCounter][1] = parseFloat(averagePSNR[1]);
                 jsonstream.write("PSNR"+length+"x"+breadth+"_"+i+":"+psnrBitrateList[psnrBitrateCounter][0] + "...Bitrate"+length+"x"+breadth+"_"+i+":"+ psnrBitrateList[psnrBitrateCounter][1] + "\n");
                 deleteUnusedFile(y4mOutput);
-                if(psnrBitrateCounter==23){
+                if(psnrBitrateCounter==34){
                     printHullPoints();
                 }
                 if (!fs.existsSync(y4mOutput)) {
@@ -136,20 +136,40 @@ function psnrcal(i,length,breadth,outputVideoFile,y4mOutput,psnrBitrateCounter) 
 
 //Encoding input file from CRF 18 to 53 for 480p,720p and 1080p
 function keepItRunning(i,length,breadth,psnrBitrateCounter){
-    if(length==640&&breadth==480&&i==53){
-        length=1080; breadth=720;i=18;
+    if(length==320&&breadth==240&&i==54){
+        length=384; breadth=288;i=18;
         processingInputFile(i,length,breadth,psnrBitrateCounter+1);
     }
-    else if(length==1080&&breadth==720&&i==53)
+    else if(length==384&&breadth==288&&i==54)
+    {
+        length=512; breadth=384;i=18;
+        processingInputFile(i,length,breadth,psnrBitrateCounter+1);
+    }
+    else if(length==512&&breadth==384&&i==54)
+    {
+        length=640; breadth=480;i=18;
+        processingInputFile(i,length,breadth,psnrBitrateCounter+1);
+    }
+    else if(length==640&&breadth==480&&i==54)
+    {
+        length=720; breadth=480;i=18;
+        processingInputFile(i,length,breadth,psnrBitrateCounter+1);
+    }
+    else if(length==720&&breadth==480&&i==54)
+    {
+        length=1280; breadth=720;i=18;
+        processingInputFile(i,length,breadth,psnrBitrateCounter+1);
+    }
+    else if(length==1280&&breadth==720&&i==54)
     {
         length=1920; breadth=1080;i=18;
         processingInputFile(i,length,breadth,psnrBitrateCounter+1);
     }
-    else if (length==1920&&breadth==1080&&i==53) {
+    else if (length==1920&&breadth==1080&&i==54) {
         return 1;
     }
     else{
-        processingInputFile(i+5,length,breadth,psnrBitrateCounter+1);
+        processingInputFile(i+9,length,breadth,psnrBitrateCounter+1);
     }
 
 
@@ -168,7 +188,7 @@ function printHullPoints() {
     var hull = require('../lib/hull.js');
     var hullPoints = new Array(hull(psnrBitrateList,Infinity));
 
-    var hullFile = "../resource/reverse/"+commonName+"Hull.txt";
+    var hullFile = "../resource/reverse/"+commonName+"Hull2.txt";
     fs.writeFile(hullFile, '', function () {
         console.log('done overwriting contents of hull file if it exists!')
     });
@@ -197,30 +217,68 @@ function printHullPoints() {
     //popping the redundant convex hull point from the list
     hull2D.pop();
 
-    var arr480 = new Array(8);
-    var arr720 = new Array(8);
-    var arr1080 = new Array(8);
-    for (var i = 0; i < 8; i++) {
-        arr480[i] = new Array(2);
+    var arr240 = new Array(5);
+    var arr288 = new Array(5);
+    var arr384 = new Array(5);
+    var arr640x480 = new Array(5);
+    var arr720x480 = new Array(5);
+    var arr720 = new Array(5);
+    var arr1080 = new Array(5);
+
+    for (var i = 0; i < 5; i++) {
+        arr240[i] = new Array(2);
+        arr288[i] = new Array(2);
+        arr384[i] = new Array(2);
+        arr640x480[i] = new Array(2);
+        arr720x480[i] = new Array(2);
         arr720[i] = new Array(2);
         arr1080[i] = new Array(2);
     }
 
-    for(var i=0;i<8;i++){
-        arr480[i][0]=psnrBitrateList[i][0];
-        arr480[i][1]=psnrBitrateList[i][1];
+    for(var i=0;i<5;i++){
+        arr240[i][0]=psnrBitrateList[i][0];
+        arr240[i][1]=psnrBitrateList[i][1];
     }
-    for(var i=0,j=8;i<8;i++,j++){
-        arr720[i][0]=psnrBitrateList[j][0];
-        arr720[i][1]=psnrBitrateList[j][1];
+    for(var i=0,j=5;i<5;i++,j++){
+        arr288[i][0]=psnrBitrateList[j][0];
+        arr288[i][1]=psnrBitrateList[j][1];
     }
-    for(var i=0,k=16;i<8;i++,k++){
+    for(var i=0,k=9;i<5;i++,k++){
+        arr384[i][0]=psnrBitrateList[k][0];
+        arr384[i][1]=psnrBitrateList[k][1];
+    }
+    for(var i=0,k=14;i<5;i++,k++){
+        arr640x480[i][0]=psnrBitrateList[k][0];
+        arr640x480[i][1]=psnrBitrateList[k][1];
+    }
+    for(var i=0,k=18;i<5;i++,k++){
+        arr720x480[i][0]=psnrBitrateList[k][0];
+        arr720x480[i][1]=psnrBitrateList[k][1];
+    }
+    for(var i=0,k=22;i<5;i++,k++){
+        arr720[i][0]=psnrBitrateList[k][0];
+        arr720[i][1]=psnrBitrateList[k][1];
+    }
+    for(var i=0,k=26;i<5;i++,k++){
         arr1080[i][0]=psnrBitrateList[k][0];
         arr1080[i][1]=psnrBitrateList[k][1];
     }
 
+
     //sorting the arrays for highcharts
-    arr480 = arr480.sort(function(a,b) {
+    arr240 = arr240.sort(function(a,b) {
+        return a[0] - b[0];
+    });
+    arr288 = arr288.sort(function(a,b) {
+        return a[0] - b[0];
+    });
+    arr384 = arr384.sort(function(a,b) {
+        return a[0] - b[0];
+    });
+    arr640x480 = arr640x480.sort(function(a,b) {
+        return a[0] - b[0];
+    });
+    arr720x480 = arr720x480.sort(function(a,b) {
         return a[0] - b[0];
     });
     arr720 = arr720.sort(function(a,b) {
@@ -233,9 +291,29 @@ function printHullPoints() {
         return a[0] - b[0];
     });
 
-    for(var i = 0; i < arr480.length; i++) {
-        for(var z = 0; z < arr480[i].length; z++) {
-            console.log("480p "+arr480[i][z]);
+    for(var i = 0; i < arr240.length; i++) {
+        for(var z = 0; z < arr240[i].length; z++) {
+            console.log("240p "+arr240[i][z]);
+        }
+    }
+    for(var i = 0; i < arr288.length; i++) {
+        for(var z = 0; z < arr288[i].length; z++) {
+            console.log("288p "+arr288[i][z]);
+        }
+    }
+    for(var i = 0; i < arr384.length; i++) {
+        for(var z = 0; z < arr384[i].length; z++) {
+            console.log("384p "+arr384[i][z]);
+        }
+    }
+    for(var i = 0; i < arr640x480.length; i++) {
+        for(var z = 0; z < arr640x480[i].length; z++) {
+            console.log("640x480p "+arr640x480[i][z]);
+        }
+    }
+    for(var i = 0; i < arr720x480.length; i++) {
+        for(var z = 0; z < arr720x480[i].length; z++) {
+            console.log("720x480p "+arr720x480[i][z]);
         }
     }
     for(var i = 0; i < arr720.length; i++) {
@@ -324,10 +402,22 @@ function printHullPoints() {
         "                verticalAlign: 'middle',\n" +
         "                borderWidth: 0\n" +
         "            },\n" +
-        "            colors: ['#FF2714', '#FFFB37','#71FF27','#3C8EFF'],\n" +
+        "            colors: ['#FF2714', '#FFFB37','#71FF27','#3C8EFF','#FF30B0','#ED6E12','#4BFFD3','#FF2EEC'],\n" +
         "            series: [{\n" +
-        "                name: '480p',\n" +
-        "                data:"+JSON.stringify(arr480)+"\n" +
+        "                name: '240p',\n" +
+        "                data:"+JSON.stringify(arr240)+"\n" +
+        "            }, {\n" +
+        "                name: '288p',\n" +
+        "                data:"+JSON.stringify(arr288)+"\n" +
+        "            }, {\n" +
+        "                name: '384p',\n" +
+        "                data:"+JSON.stringify(arr384)+"\n" +
+        "            }, {\n" +
+        "                name: '640x480p',\n" +
+        "                data:"+JSON.stringify(arr640x480)+"\n" +
+        "            }, {\n" +
+        "                name: '720x480p',\n" +
+        "                data:"+JSON.stringify(arr720x480)+"\n" +
         "            }, {\n" +
         "                name: '720p',\n" +
         "                data:"+JSON.stringify(arr720)+"\n" +
@@ -350,14 +440,14 @@ function printHullPoints() {
         "</html>";
 
 
-    chartFile=commonName+"1.html";
+    chartFile=commonName+"2.html";
     fs.writeFile(chartFile,htmlData, function () {
         console.log('Wrote html file');
     });
 
 
     /***************Printing the bitrate ladder in an excel file*********************/
-    var excelbuilder = require('msexcel-builder');
+   /* var excelbuilder = require('msexcel-builder');
 
     excelFile = commonName+".xlsx";
     var workbook = excelbuilder.createWorkbook('./',excelFile);
@@ -466,7 +556,7 @@ function printHullPoints() {
             throw err;
         else
             console.log('The Bitrate ladder was successfully created and saved in an excel file');
-    });
+    });*/
     /**********excel printing finished**************************/
 }
 
@@ -479,7 +569,7 @@ app.use(express.static('images'));
 
 app.get('/start', function(req, res){
     res.send("Encoding has begun..");
-    processingInputFile(18,640,480,0);
+    processingInputFile(18,320,240,0);
 });
 
 
@@ -487,10 +577,10 @@ app.get('/chart', function(req, res){
     res.sendFile(path.join(__dirname + '/'+chartFile));
 });
 
-app.get('/bitrateladder', function(req, res){
+/*app.get('/bitrateladder', function(req, res){
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.setHeader('Content-Disposition', 'attachment; filename=' + excelFile);
     res.sendFile(path.join(__dirname + '/'+excelFile));
-});
+});*/
 
 app.listen(3000);
