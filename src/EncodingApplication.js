@@ -1,4 +1,4 @@
-var inputVideoFile = "../resource/CosmosLaundromat2min.mp4";
+var inputVideoFile = "../resource/Fantastic_Four_2015_Trailer_3_Intl_5.1-1080p-HDTN.mp4";
 var commonName = inputVideoFile.split('resource/')[1].split('.')[0];
 var ffmpeg = require('fluent-ffmpeg');
 var fs = require('fs');
@@ -6,8 +6,8 @@ var fs = require('fs');
 var chartFile="";
 var excelFile = "";
 
-var psnrBitrateList = new Array(35);
-for (var i = 0; i < 35; i++) {
+var psnrBitrateList = new Array(56);
+for (var i = 0; i < 56; i++) {
     psnrBitrateList[i] = new Array(2);
 }
 var width; var height; var resolution;
@@ -25,13 +25,13 @@ function processingInputFile(i,length,breadth,psnrBitrateCounter){
 
 
 //saving console log message in a text file
-    var logFileName = "../resource/log"+commonName+length+"x"+breadth+"_"+i+".txt";
+  //  var logFileName = "../resource/log"+commonName+length+"x"+breadth+"_"+i+".txt";
 
     var util = require('util');
-    var logFile = fs.createWriteStream(logFileName, { flags: 'a' });
+   // var logFile = fs.createWriteStream(logFileName, { flags: 'a' });
     var logStdout = process.stdout;
     console.log = function () {
-        logFile.write(util.format.apply(null, arguments) + '\n');
+     //   logFile.write(util.format.apply(null, arguments) + '\n');
         logStdout.write(util.format.apply(null, arguments) + '\n');
     }
     console.error = console.log;
@@ -122,7 +122,7 @@ function psnrcal(i,length,breadth,outputVideoFile,y4mOutput,psnrBitrateCounter) 
                 psnrBitrateList[psnrBitrateCounter][1] = parseFloat(averagePSNR[1]);
                 jsonstream.write("PSNR"+length+"x"+breadth+"_"+i+":"+psnrBitrateList[psnrBitrateCounter][0] + "...Bitrate"+length+"x"+breadth+"_"+i+":"+ psnrBitrateList[psnrBitrateCounter][1] + "\n");
                 deleteUnusedFile(y4mOutput);
-                if(psnrBitrateCounter==34){
+                if(psnrBitrateCounter==55){
                     printHullPoints();
                 }
                 if (!fs.existsSync(y4mOutput)) {
@@ -136,40 +136,40 @@ function psnrcal(i,length,breadth,outputVideoFile,y4mOutput,psnrBitrateCounter) 
 
 //Encoding input file from CRF 18 to 53 for 480p,720p and 1080p
 function keepItRunning(i,length,breadth,psnrBitrateCounter){
-    if(length==320&&breadth==240&&i==54){
+    if(length==320&&breadth==240&&i==53){
         length=384; breadth=288;i=18;
         processingInputFile(i,length,breadth,psnrBitrateCounter+1);
     }
-    else if(length==384&&breadth==288&&i==54)
+    else if(length==384&&breadth==288&&i==53)
     {
         length=512; breadth=384;i=18;
         processingInputFile(i,length,breadth,psnrBitrateCounter+1);
     }
-    else if(length==512&&breadth==384&&i==54)
+    else if(length==512&&breadth==384&&i==53)
     {
         length=640; breadth=480;i=18;
         processingInputFile(i,length,breadth,psnrBitrateCounter+1);
     }
-    else if(length==640&&breadth==480&&i==54)
+    else if(length==640&&breadth==480&&i==53)
     {
         length=720; breadth=480;i=18;
         processingInputFile(i,length,breadth,psnrBitrateCounter+1);
     }
-    else if(length==720&&breadth==480&&i==54)
+    else if(length==720&&breadth==480&&i==53)
     {
         length=1280; breadth=720;i=18;
         processingInputFile(i,length,breadth,psnrBitrateCounter+1);
     }
-    else if(length==1280&&breadth==720&&i==54)
+    else if(length==1280&&breadth==720&&i==53)
     {
         length=1920; breadth=1080;i=18;
         processingInputFile(i,length,breadth,psnrBitrateCounter+1);
     }
-    else if (length==1920&&breadth==1080&&i==54) {
+    else if (length==1920&&breadth==1080&&i==53) {
         return 1;
     }
     else{
-        processingInputFile(i+9,length,breadth,psnrBitrateCounter+1);
+        processingInputFile(i+5,length,breadth,psnrBitrateCounter+1);
     }
 
 
@@ -217,62 +217,62 @@ function printHullPoints() {
     //popping the redundant convex hull point from the list
     hull2D.pop();
 
-    var arr240 = new Array(5);
-    var arr288 = new Array(5);
-    var arr384 = new Array(5);
-    var arr640x480 = new Array(5);
-    var arr720x480 = new Array(5);
-    var arr720 = new Array(5);
-    var arr1080 = new Array(5);
+    var arr320x240 = new Array(8);
+    var arr384x288 = new Array(8);
+    var arr512x384 = new Array(8);
+    var arr640x480 = new Array(8);
+    var arr720x480 = new Array(8);
+    var arr1280x720 = new Array(8);
+    var arr1920x1080 = new Array(8);
 
-    for (var i = 0; i < 5; i++) {
-        arr240[i] = new Array(2);
-        arr288[i] = new Array(2);
-        arr384[i] = new Array(2);
+    for (var i = 0; i < 8; i++) {
+        arr320x240[i] = new Array(2);
+        arr384x288[i] = new Array(2);
+        arr512x384[i] = new Array(2);
         arr640x480[i] = new Array(2);
         arr720x480[i] = new Array(2);
-        arr720[i] = new Array(2);
-        arr1080[i] = new Array(2);
+        arr1280x720[i] = new Array(2);
+        arr1920x1080[i] = new Array(2);
     }
 
-    for(var i=0;i<5;i++){
-        arr240[i][0]=psnrBitrateList[i][0];
-        arr240[i][1]=psnrBitrateList[i][1];
+    for(var i=0;i<8;i++){
+        arr320x240[i][0]=psnrBitrateList[i][0];
+        arr320x240[i][1]=psnrBitrateList[i][1];
     }
-    for(var i=0,j=5;i<5;i++,j++){
-        arr288[i][0]=psnrBitrateList[j][0];
-        arr288[i][1]=psnrBitrateList[j][1];
+    for(var i=0,j=8;i<8;i++,j++){
+        arr384x288[i][0]=psnrBitrateList[j][0];
+        arr384x288[i][1]=psnrBitrateList[j][1];
     }
-    for(var i=0,k=9;i<5;i++,k++){
-        arr384[i][0]=psnrBitrateList[k][0];
-        arr384[i][1]=psnrBitrateList[k][1];
+    for(var i=0,k=16;i<8;i++,k++){
+        arr512x384[i][0]=psnrBitrateList[k][0];
+        arr512x384[i][1]=psnrBitrateList[k][1];
     }
-    for(var i=0,k=14;i<5;i++,k++){
+    for(var i=0,k=24;i<8;i++,k++){
         arr640x480[i][0]=psnrBitrateList[k][0];
         arr640x480[i][1]=psnrBitrateList[k][1];
     }
-    for(var i=0,k=18;i<5;i++,k++){
+    for(var i=0,k=32;i<8;i++,k++){
         arr720x480[i][0]=psnrBitrateList[k][0];
         arr720x480[i][1]=psnrBitrateList[k][1];
     }
-    for(var i=0,k=22;i<5;i++,k++){
-        arr720[i][0]=psnrBitrateList[k][0];
-        arr720[i][1]=psnrBitrateList[k][1];
+    for(var i=0,k=40;i<8;i++,k++){
+        arr1280x720[i][0]=psnrBitrateList[k][0];
+        arr1280x720[i][1]=psnrBitrateList[k][1];
     }
-    for(var i=0,k=26;i<5;i++,k++){
-        arr1080[i][0]=psnrBitrateList[k][0];
-        arr1080[i][1]=psnrBitrateList[k][1];
+    for(var i=0,k=48;i<8;i++,k++){
+        arr1920x1080[i][0]=psnrBitrateList[k][0];
+        arr1920x1080[i][1]=psnrBitrateList[k][1];
     }
 
 
     //sorting the arrays for highcharts
-    arr240 = arr240.sort(function(a,b) {
+    arr320x240 = arr320x240.sort(function(a,b) {
         return a[0] - b[0];
     });
-    arr288 = arr288.sort(function(a,b) {
+    arr384x288 = arr384x288.sort(function(a,b) {
         return a[0] - b[0];
     });
-    arr384 = arr384.sort(function(a,b) {
+    arr512x384 = arr512x384.sort(function(a,b) {
         return a[0] - b[0];
     });
     arr640x480 = arr640x480.sort(function(a,b) {
@@ -281,29 +281,29 @@ function printHullPoints() {
     arr720x480 = arr720x480.sort(function(a,b) {
         return a[0] - b[0];
     });
-    arr720 = arr720.sort(function(a,b) {
+    arr1280x720 = arr1280x720.sort(function(a,b) {
         return a[0] - b[0];
     });
-    arr1080 = arr1080.sort(function(a,b) {
+    arr1920x1080 = arr1920x1080.sort(function(a,b) {
         return a[0] - b[0];
     });
     hull2D = hull2D.sort(function(a,b) {
         return a[0] - b[0];
     });
 
-    for(var i = 0; i < arr240.length; i++) {
-        for(var z = 0; z < arr240[i].length; z++) {
-            console.log("240p "+arr240[i][z]);
+    for(var i = 0; i < arr320x240.length; i++) {
+        for(var z = 0; z < arr320x240[i].length; z++) {
+            console.log("320x240p "+arr320x240[i][z]);
         }
     }
-    for(var i = 0; i < arr288.length; i++) {
-        for(var z = 0; z < arr288[i].length; z++) {
-            console.log("288p "+arr288[i][z]);
+    for(var i = 0; i < arr384x288.length; i++) {
+        for(var z = 0; z < arr384x288[i].length; z++) {
+            console.log("384x288p "+arr384x288[i][z]);
         }
     }
-    for(var i = 0; i < arr384.length; i++) {
-        for(var z = 0; z < arr384[i].length; z++) {
-            console.log("384p "+arr384[i][z]);
+    for(var i = 0; i < arr512x384.length; i++) {
+        for(var z = 0; z < arr512x384[i].length; z++) {
+            console.log("512x384p "+arr512x384[i][z]);
         }
     }
     for(var i = 0; i < arr640x480.length; i++) {
@@ -316,14 +316,14 @@ function printHullPoints() {
             console.log("720x480p "+arr720x480[i][z]);
         }
     }
-    for(var i = 0; i < arr720.length; i++) {
-        for(var z = 0; z < arr720[i].length; z++) {
-            console.log("720p "+arr720[i][z]);
+    for(var i = 0; i < arr1280x720.length; i++) {
+        for(var z = 0; z < arr1280x720[i].length; z++) {
+            console.log("1280x720p "+arr1280x720[i][z]);
         }
     }
-    for(var i = 0; i < arr1080.length; i++) {
-        for(var z = 0; z < arr1080[i].length; z++) {
-            console.log("1080p "+arr1080[i][z]);
+    for(var i = 0; i < arr1920x1080.length; i++) {
+        for(var z = 0; z < arr1920x1080[i].length; z++) {
+            console.log("1920x1080p "+arr1920x1080[i][z]);
         }
     }
     for(var i = 0; i < hull2D.length; i++) {
@@ -404,14 +404,14 @@ function printHullPoints() {
         "            },\n" +
         "            colors: ['#FF2714', '#FFFB37','#71FF27','#3C8EFF','#FF30B0','#ED6E12','#4BFFD3','#FF2EEC'],\n" +
         "            series: [{\n" +
-        "                name: '240p',\n" +
-        "                data:"+JSON.stringify(arr240)+"\n" +
+        "                name: '320x240p',\n" +
+        "                data:"+JSON.stringify(arr320x240)+"\n" +
         "            }, {\n" +
-        "                name: '288p',\n" +
-        "                data:"+JSON.stringify(arr288)+"\n" +
+        "                name: '384x288p',\n" +
+        "                data:"+JSON.stringify(arr384x288)+"\n" +
         "            }, {\n" +
-        "                name: '384p',\n" +
-        "                data:"+JSON.stringify(arr384)+"\n" +
+        "                name: '512x384p',\n" +
+        "                data:"+JSON.stringify(arr512x384)+"\n" +
         "            }, {\n" +
         "                name: '640x480p',\n" +
         "                data:"+JSON.stringify(arr640x480)+"\n" +
@@ -419,11 +419,11 @@ function printHullPoints() {
         "                name: '720x480p',\n" +
         "                data:"+JSON.stringify(arr720x480)+"\n" +
         "            }, {\n" +
-        "                name: '720p',\n" +
-        "                data:"+JSON.stringify(arr720)+"\n" +
+        "                name: '1280x720p',\n" +
+        "                data:"+JSON.stringify(arr1280x720)+"\n" +
         "            }, {\n" +
-        "                    name: '1080p',\n" +
-        "                    data:"+JSON.stringify(arr1080)+"\n" +
+        "                    name: '1920x1080p',\n" +
+        "                    data:"+JSON.stringify(arr1920x1080)+"\n" +
         "                }, {\n" +
         "                    name: 'Convex Hull',\n" +
         "                    data:"+JSON.stringify(hull2D)+"\n" +
@@ -447,35 +447,36 @@ function printHullPoints() {
 
 
     /***************Printing the bitrate ladder in an excel file*********************/
-   /* var excelbuilder = require('msexcel-builder');
+    var excelbuilder = require('msexcel-builder');
 
     excelFile = commonName+".xlsx";
     var workbook = excelbuilder.createWorkbook('./',excelFile);
 
-    var bitrateLadderArray = new Array(3);
-    for (var x=0;x<3;x++){
-        bitrateLadderArray[x] = new Array(3);
+    var bitrateLadderArray = new Array(7);
+    for (var x=0;x<7;x++){
+        bitrateLadderArray[x] = ['',0,0];
     }
 
-    var arr480min = Math.abs(arr480[0][0]-hull2D[0][0]);
-    for(var x = 0; x < arr480.length; x++){
+   /* var arr320x240min = Math.abs(arr320x240[0][0]-hull2D[0][0]);
+    for(var x = arr320x240.length-1; x >=0 ; x--){
         var counter = 0;
-        for(var y = 0; y < hull2D.length; y++){
-            if(arr480[x][0] == hull2D[y][0] && arr480[x][1] == hull2D[y][1]){
-                bitrateLadderArray[0][0]= "480p";
+        for(var y = hull2D.length-1; y >=0 ; y--){
+            if(arr320x240[x][0] == hull2D[y][0] && arr320x240[x][1] == hull2D[y][1] ){
+                bitrateLadderArray[0][0]= "320x240p";
                 bitrateLadderArray[0][1]=hull2D[y][0];
                 bitrateLadderArray[0][2]=hull2D[y][1];
+
                 counter++;
                 break;
             }
-            else if((Math.abs(arr480[x][0]-hull2D[y][0])<arr480min)){
-                bitrateLadderArray[0][0]= "480p";
-                if(hull2D[y][1]>arr480[x][1]) {
+            else if((Math.abs(arr320x240[x][0]-hull2D[y][0])<arr320x240min)){
+                bitrateLadderArray[0][0]= "320x240p";
+                if(hull2D[y][1]>arr320x240[x][1]) {
                     bitrateLadderArray[0][1] = hull2D[y][0];
                     bitrateLadderArray[0][2] = hull2D[y][1];
                 }else{
-                    bitrateLadderArray[0][1] = arr480[x][0];
-                    bitrateLadderArray[0][2] = arr480[x][1];
+                    bitrateLadderArray[0][1] = arr320x240[x][0];
+                    bitrateLadderArray[0][2] = arr320x240[x][1];
                 }
             }
         }
@@ -483,27 +484,27 @@ function printHullPoints() {
             break;
         }
     }
-    console.log("New bitrate for 480p: "+bitrateLadderArray[0][1]+","+bitrateLadderArray[0][2]);
+    console.log("New bitrate for 320x240: "+bitrateLadderArray[0][1]+","+bitrateLadderArray[0][2]);
 
-    var arr720min = Math.abs(arr720[0][0]-hull2D[0][0]);
-    for(var x = 0; x < arr720.length; x++){
+    var arr384x288min = Math.abs(arr384x288[0][0]-hull2D[0][0]);
+    for( var x =arr384x288.length-1;x >= 0; x--){
         var counter = 0;
-        for(var y = 0; y < hull2D.length; y++){
-            if(arr720[x][0] == hull2D[y][0] && arr720[x][1] == hull2D[y][1]){
-                bitrateLadderArray[1][0]= "720p";
+        for(var y = hull2D.length-1;y >= 0;  y--){
+            if(arr384x288[x][0] == hull2D[y][0] && arr384x288[x][1] == hull2D[y][1]){
+                bitrateLadderArray[1][0]= "384x288p";
                 bitrateLadderArray[1][1]=hull2D[y][0];
                 bitrateLadderArray[1][2]=hull2D[y][1];
                 counter++;
                 break;
             }
-            else if((Math.abs(arr720[x][0]-hull2D[y][0])<arr720min)){
-                bitrateLadderArray[1][0]= "720p";
-                if(hull2D[y][1]>arr720[x][1]) {
+            else if((Math.abs(arr384x288[x][0]-hull2D[y][0])<arr384x288min)){
+                bitrateLadderArray[1][0]= "384x288p";
+                if(hull2D[y][1]>arr384x288[x][1]) {
                     bitrateLadderArray[1][1] = hull2D[y][0];
                     bitrateLadderArray[1][2] = hull2D[y][1];
                 }else{
-                    bitrateLadderArray[1][1] = arr720[x][0];
-                    bitrateLadderArray[1][2] = arr720[x][1];
+                    bitrateLadderArray[1][1] = arr384x288[x][0];
+                    bitrateLadderArray[1][2] = arr384x288[x][1];
                 }
             }
         }
@@ -511,26 +512,27 @@ function printHullPoints() {
             break;
         }
     }
-    console.log("New bitrate for 720p: "+bitrateLadderArray[1][1]+","+bitrateLadderArray[1][2]);
+    console.log("New bitrate for 384x288p: "+bitrateLadderArray[1][1]+","+bitrateLadderArray[1][2]);
 
-    var arr1080min = Math.abs(arr1080[0][0]-hull2D[0][0]);
-    for(var x = 0; x < arr1080.length; x++){
+    var arr512x384min = Math.abs(arr512x384[0][0]-hull2D[0][0]);
+    for(var x = arr512x384.length-1; x >= 0;  x--){
         var counter = 0;
-        for(var y = 0; y < hull2D.length; y++){
-            if(arr1080[x][0] == hull2D[y][0] && arr1080[x][1] == hull2D[y][1]){
-                bitrateLadderArray[2][0]= "1080p";
+        for(var y = hull2D.length-1;y >= 0;  y--){
+            if(arr512x384[x][0] == hull2D[y][0] && arr512x384[x][1] == hull2D[y][1]){
+                bitrateLadderArray[2][0]= "512x384p";
                 bitrateLadderArray[2][1]=hull2D[y][0];
                 bitrateLadderArray[2][2]=hull2D[y][1];
                 counter++;
                 break;
-            }else if((Math.abs(arr1080[x][0]-hull2D[y][0])<arr1080min)){
-                bitrateLadderArray[2][0]= "720p";
-                if(hull2D[y][1]>arr1080[x][1]) {
+            }
+            else if((Math.abs(arr512x384[x][0]-hull2D[y][0])<arr512x384min)){
+                bitrateLadderArray[2][0]= "512x384p";
+                if(hull2D[y][1]>arr512x384[x][1]) {
                     bitrateLadderArray[2][1] = hull2D[y][0];
                     bitrateLadderArray[2][2] = hull2D[y][1];
                 }else{
-                    bitrateLadderArray[2][1] = arr720[x][0];
-                    bitrateLadderArray[2][2] = arr720[x][1];
+                    bitrateLadderArray[2][1] = arr512x384[x][0];
+                    bitrateLadderArray[2][2] = arr512x384[x][1];
                 }
             }
         }
@@ -538,15 +540,217 @@ function printHullPoints() {
             break;
         }
     }
-    console.log("New bitrate for 1080p: "+bitrateLadderArray[2][1]+","+bitrateLadderArray[2][2]);
+    console.log("New bitrate for 512x384p: "+bitrateLadderArray[2][1]+","+bitrateLadderArray[2][2]);
+
+    var arr640x480min = Math.abs(arr640x480[0][0]-hull2D[0][0]);
+    for(var x = arr640x480.length-1;x >= 0;  x--){
+        var counter = 0;
+        for(var y = hull2D.length-1;y >= 0;  y--){
+            if(arr640x480[x][0] == hull2D[y][0] && arr640x480[x][1] == hull2D[y][1]){
+                bitrateLadderArray[3][0]= "640x480p";
+                bitrateLadderArray[3][1]=hull2D[y][0];
+                bitrateLadderArray[3][2]=hull2D[y][1];
+                counter++;
+                break;
+            }
+            else if((Math.abs(arr640x480[x][0]-hull2D[y][0])<arr640x480min)){
+                bitrateLadderArray[3][0]= "640x480p";
+                if(hull2D[y][1]>arr640x480[x][1]) {
+                    bitrateLadderArray[3][1] = hull2D[y][0];
+                    bitrateLadderArray[3][2] = hull2D[y][1];
+                }else{
+                    bitrateLadderArray[3][1] = arr640x480[x][0];
+                    bitrateLadderArray[3][2] = arr640x480[x][1];
+                }
+            }
+        }
+        if(counter!=0){
+            break;
+        }
+    }
+    console.log("New bitrate for 640x480p: "+bitrateLadderArray[3][1]+","+bitrateLadderArray[3][2]);
+    var arr720x480min = Math.abs(arr720x480[0][0]-hull2D[0][0]);
+    for(var x = arr720x480.length-1; x >= 0; x--){
+        var counter = 0;
+        for(var y =hull2D.length-1; y >= 0; y--){
+            if(arr720x480[x][0] == hull2D[y][0] && arr720x480[x][1] == hull2D[y][1]){
+                bitrateLadderArray[4][0]= "720x480p";
+                bitrateLadderArray[4][1]=hull2D[y][0];
+                bitrateLadderArray[4][2]=hull2D[y][1];
+                counter++;
+                break;
+            }
+            else if((Math.abs(arr720x480[x][0]-hull2D[y][0])<arr720x480min)){
+                bitrateLadderArray[4][0]= "720x480p";
+                if(hull2D[y][1]>arr720x480[x][1]) {
+                    bitrateLadderArray[4][1] = hull2D[y][0];
+                    bitrateLadderArray[4][2] = hull2D[y][1];
+                }else{
+                    bitrateLadderArray[4][1] = arr720x480[x][0];
+                    bitrateLadderArray[4][2] = arr720x480[x][1];
+                }
+            }
+        }
+        if(counter!=0){
+            break;
+        }
+    }
+    console.log("New bitrate for 720x480p: "+bitrateLadderArray[4][1]+","+bitrateLadderArray[4][2]);
+    var arr1280x720min = Math.abs(arr1280x720[0][0]-hull2D[0][0]);
+    for(var x =arr1280x720.length-1;x >= 0;  x--){
+        var counter = 0;
+        for(var y = hull2D.length-1;y >= 0;  y--){
+            if(arr1280x720[x][0] == hull2D[y][0] && arr1280x720[x][1] == hull2D[y][1]){
+                bitrateLadderArray[5][0]= "1280x720p";
+                bitrateLadderArray[5][1]=hull2D[y][0];
+                bitrateLadderArray[5][2]=hull2D[y][1];
+                counter++;
+                break;
+            }
+            else if((Math.abs(arr1280x720[x][0]-hull2D[y][0])<arr1280x720min)){
+                bitrateLadderArray[5][0]= "1280x720p";
+                if(hull2D[y][1]>arr1280x720[x][1]) {
+                    bitrateLadderArray[5][1] = hull2D[y][0];
+                    bitrateLadderArray[5][2] = hull2D[y][1];
+                }else{
+                    bitrateLadderArray[5][1] = arr1280x720[x][0];
+                    bitrateLadderArray[5][2] = arr1280x720[x][1];
+                }
+            }
+        }
+        if(counter!=0){
+            break;
+        }
+    }
+    console.log("New bitrate for 1280x720p: "+bitrateLadderArray[5][1]+","+bitrateLadderArray[5][2]);
+    var arr1920x1080min = Math.abs(arr1920x1080[0][0]-hull2D[0][0]);
+    for(var x = arr1920x1080.length-1;x >= 0;  x--){
+        var counter = 0;
+        for(var y = hull2D.length-1;y >= 0;  y--){
+            if(arr1920x1080[x][0] == hull2D[y][0] && arr1920x1080[x][1] == hull2D[y][1]){
+                bitrateLadderArray[6][0]= "1920x1080p";
+                bitrateLadderArray[6][1]=hull2D[y][0];
+                bitrateLadderArray[6][2]=hull2D[y][1];
+                counter++;
+                break;
+            }
+            else if((Math.abs(arr1920x1080[x][0]-hull2D[y][0])<arr1920x1080min)){
+                bitrateLadderArray[6][0]= "1920x1080p";
+                if(hull2D[y][1]>arr1920x1080[x][1]) {
+                    bitrateLadderArray[6][1] = hull2D[y][0];
+                    bitrateLadderArray[6][2] = hull2D[y][1];
+                }else{
+                    bitrateLadderArray[6][1] = arr1920x1080[x][0];
+                    bitrateLadderArray[6][2] = arr1920x1080[x][1];
+                }
+            }
+        }
+        if(counter!=0){
+            break;
+        }
+    }
+    console.log("New bitrate for 1920x1080p: "+bitrateLadderArray[6][1]+","+bitrateLadderArray[6][2]); */
+    for(var i=0;i<arr320x240.length;i++){
+        for(var j=0;j<hull2D.length;j++){
+            bitrateLadderArray[0][0]='320x240';
+            if((arr320x240[i][0]==hull2D[j][0])&&(arr320x240[i][1]<=45)&&(arr320x240[i][1]>bitrateLadderArray[0][2])){
+                bitrateLadderArray[0][1]=arr320x240[i][0];
+                bitrateLadderArray[0][2]=arr320x240[i][1];
+            }
+        }
+    }
+
+    for(var i=0;i<arr384x288.length;i++){
+        for(var j=0;j<hull2D.length;j++){
+            bitrateLadderArray[1][0]='384x288';
+            if((arr384x288[i][0]==hull2D[j][0])&&(arr384x288[i][1]<=45)&&(arr384x288[i][1]>bitrateLadderArray[1][2])){
+                bitrateLadderArray[1][1]=arr384x288[i][0];
+                bitrateLadderArray[1][2]=arr384x288[i][1];
+            }
+        }
+    }
+    if(bitrateLadderArray[1][1]==0){
+        bitrateLadderArray[1][1]=bitrateLadderArray[0][1];
+        bitrateLadderArray[1][2]=bitrateLadderArray[0][2];
+    }
+
+    for(var i=0;i<arr512x384.length;i++){
+        for(var j=0;j<hull2D.length;j++){
+            bitrateLadderArray[2][0]='512x384';
+            if((arr512x384[i][0]==hull2D[j][0])&&(arr512x384[i][1]<=45)&&(arr512x384[i][1]>bitrateLadderArray[2][2])){
+                bitrateLadderArray[2][1]=arr512x384[i][0];
+                bitrateLadderArray[2][2]=arr512x384[i][1];
+            }
+        }
+    }
+    if(bitrateLadderArray[2][1]==0){
+        bitrateLadderArray[2][1]=bitrateLadderArray[1][1];
+        bitrateLadderArray[2][2]=bitrateLadderArray[1][2];
+    }
+
+    for(var i=0;i<arr640x480.length;i++){
+        for(var j=0;j<hull2D.length;j++){
+            bitrateLadderArray[3][0]='640x480';
+            if((arr640x480[i][0]==hull2D[j][0])&&(arr640x480[i][1]<=45)&&(arr640x480[i][1]>bitrateLadderArray[3][2])){
+                bitrateLadderArray[3][1]=arr640x480[i][0];
+                bitrateLadderArray[3][2]=arr640x480[i][1];
+            }
+        }
+    }
+    if(bitrateLadderArray[3][1]==0){
+        bitrateLadderArray[3][1]=bitrateLadderArray[2][1];
+        bitrateLadderArray[3][2]=bitrateLadderArray[2][2];
+    }
+
+    for(var i=0;i<arr720x480.length;i++){
+        for(var j=0;j<hull2D.length;j++){
+            bitrateLadderArray[4][0]='720x480';
+            if((arr720x480[i][0]==hull2D[j][0])&&(arr720x480[i][1]<=45)&&(arr720x480[i][1]>bitrateLadderArray[4][2])){
+                bitrateLadderArray[4][1]=arr720x480[i][0];
+                bitrateLadderArray[4][2]=arr720x480[i][1];
+            }
+        }
+    }
+    if(bitrateLadderArray[4][1]==0){
+        bitrateLadderArray[4][1]=bitrateLadderArray[3][1];
+        bitrateLadderArray[4][2]=bitrateLadderArray[3][2];
+    }
+
+    for(var i=0;i<arr1280x720.length;i++){
+        for(var j=0;j<hull2D.length;j++){
+            bitrateLadderArray[5][0]='1280x720';
+            if((arr1280x720[i][0]==hull2D[j][0])&&(arr1280x720[i][1]<=45)&&(arr1280x720[i][1]>bitrateLadderArray[5][2])){
+                bitrateLadderArray[5][1]=arr1280x720[i][0];
+                bitrateLadderArray[5][2]=arr1280x720[i][1];
+            }
+        }
+    }
+    if(bitrateLadderArray[5][1]==0){
+        bitrateLadderArray[5][1]=bitrateLadderArray[4][1];
+        bitrateLadderArray[5][2]=bitrateLadderArray[4][2];
+    }
+
+    for(var i=0;i<arr1920x1080.length;i++){
+        for(var j=0;j<hull2D.length;j++){
+            bitrateLadderArray[6][0]='1920x1080';
+            if((arr1920x1080[i][0]==hull2D[j][0])&&(arr1920x1080[i][1]<=45)&&(arr1920x1080[i][1]>bitrateLadderArray[6][2])){
+                bitrateLadderArray[6][1]=arr1920x1080[i][0];
+                bitrateLadderArray[6][2]=arr1920x1080[i][1];
+            }
+        }
+    }
+    if(bitrateLadderArray[6][1]==0){
+        bitrateLadderArray[6][1]=bitrateLadderArray[5][1];
+        bitrateLadderArray[6][2]=bitrateLadderArray[5][2];
+    }
 
     console.log(bitrateLadderArray);
 
-    var sheet1 = workbook.createSheet('sheet1', 4, 4);
+    var sheet1 = workbook.createSheet('sheet1', 4, 8);
     sheet1.set(1, 1, 'Quality');
     sheet1.set(2, 1, 'Bitrate');
     sheet1.set(3, 1, 'PSNR');
-    for (var row = 0; row < 3; row++) {
+    for (var row = 0; row < 7; row++) {
         for(var col=0;col<3;col++)
             sheet1.set(col+1, row+2, bitrateLadderArray[row][col]);
     }
@@ -556,7 +760,8 @@ function printHullPoints() {
             throw err;
         else
             console.log('The Bitrate ladder was successfully created and saved in an excel file');
-    });*/
+    });
+
     /**********excel printing finished**************************/
 }
 
@@ -577,10 +782,10 @@ app.get('/chart', function(req, res){
     res.sendFile(path.join(__dirname + '/'+chartFile));
 });
 
-/*app.get('/bitrateladder', function(req, res){
+app.get('/bitrateladder', function(req, res){
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.setHeader('Content-Disposition', 'attachment; filename=' + excelFile);
     res.sendFile(path.join(__dirname + '/'+excelFile));
-});*/
+});
 
 app.listen(3000);
