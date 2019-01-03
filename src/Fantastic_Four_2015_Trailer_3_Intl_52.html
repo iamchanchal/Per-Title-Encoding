@@ -1,0 +1,106 @@
+<html>
+<head>
+    <title>Encoding plots for Fantastic_Four_2015_Trailer_3_Intl_5</title>
+
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css" />
+   
+</head>
+<body>
+<div class="container">
+    <h1>Encoding plots for Fantastic_Four_2015_Trailer_3_Intl_5</h1>
+
+    <div class="highcharts-container" id="encodedChart"></div>
+
+
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/highcharts/highcharts.js"></script>
+    <script src="bower_components/highcharts/modules/exporting.js"></script>
+    <script src="bower_components/highcharts/modules/canvas-tools.js"></script>
+    <script src="bower_components/export-csv/export-csv.js"></script>
+    <script src="bower_components/jspdf/dist/jspdf.min.js"></script>
+
+    <script src="bower_components/highcharts-export-clientside/highcharts-export-clientside.js"></script>
+
+    <script>
+        $(".browser-support *[data-type]").each(function() {
+            var jThis = $(this);
+            if(Highcharts.exporting.supports(jThis.data("type"))) {
+                jThis.addClass("text-success");
+                jThis.html('<span class="glyphicon glyphicon-ok"></span>');
+            }
+            else {
+                jThis.addClass("text-danger");
+                jThis.html('<span class="glyphicon glyphicon-remove"></span>');
+            }
+        });
+    </script>
+
+    <script>
+        $('#encodedChart').highcharts({
+            title: {
+                text: 'Bitrate-PSNR'
+
+            },
+            chart: {
+                type: 'spline'
+
+            },
+            xAxis: {title: {
+                    text: 'BITRATE (bps)'
+                }
+
+            },
+            yAxis: {
+                title: {
+                    text: 'PSNR (dB)'
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1
+
+                }]
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'middle',
+                borderWidth: 0
+            },
+            colors: ['#FF2714', '#FFFB37','#71FF27','#3C8EFF','#FF30B0','#ED6E12','#4BFFD3','#696969'],
+            series: [{
+                name: '320x240p',
+                data:[[11302,25.589424],[14742,26.821694],[23793,28.93873],[39647,30.945786],[68415,32.760688],[121108,34.257282],[219326,35.338248],[407128,36.011136]]
+            }, {
+                name: '384x288p',
+                data:[[14586,26.032054],[19335,27.362323],[31593,29.571646],[52671,31.694644],[91052,33.612039],[160879,35.204277],[291895,36.385082],[546433,37.134568]]
+            }, {
+                name: '512x384p',
+                data:[[22718,26.836565],[30190,28.274734],[49882,30.631184],[83170,32.907918],[143144,34.992259],[252695,36.78356],[461038,38.147809],[882321,39.052108]]
+            }, {
+                name: '640x480p',
+                data:[[32363,27.472995],[43336,28.944068],[71601,31.476445],[118894,33.905012],[203774,36.14502],[358662,38.111719],[658902,39.660022],[1301113,40.730454]]
+            }, {
+                name: '720x480p',
+                data:[[35595,27.661526],[47917,29.174629],[78977,31.72844],[130867,34.203391],[223760,36.475017],[393501,38.493583],[724509,40.106956],[1447857,41.235363]]
+            }, {
+                name: '1280x720p',
+                data:[[81664,28.878421],[109992,30.679747],[180014,33.692863],[291255,36.547642],[489890,39.226183],[860329,41.72296],[1653301,43.913652],[3728495,45.748976]]
+            }, {
+                    name: '1920x1080p',
+                    data:[[169765,29.896122],[226281,31.950495],[364724,35.274157],[578851,38.33546],[969776,41.128246],[1745339,43.652961],[3682760,45.892029],[8772941,48.202045]]
+                }, {
+                    name: 'Convex Hull',
+                    data:[[11302,25.589424],[14742,26.821694],[23793,28.93873],[39647,30.945786],[68415,32.760688],[91052,33.612039],[143144,34.992259],[203774,36.14502],[223760,36.475017],[358662,38.111719],[393501,38.493583],[489890,39.226183],[860329,41.72296],[1653301,43.913652],[3682760,45.892029],[8772941,48.202045]]
+                }],
+            exporting: {
+                filename: 'Fantastic_Four_2015_Trailer_3_Intl_5'
+
+            }
+        });
+    </script>
+
+</div>
+</body>
+</html>

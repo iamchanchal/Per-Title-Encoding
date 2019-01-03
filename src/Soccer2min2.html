@@ -1,0 +1,106 @@
+<html>
+<head>
+    <title>Encoding plots for Soccer2min</title>
+
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css" />
+   
+</head>
+<body>
+<div class="container">
+    <h1>Encoding plots for Soccer2min</h1>
+
+    <div class="highcharts-container" id="encodedChart"></div>
+
+
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/highcharts/highcharts.js"></script>
+    <script src="bower_components/highcharts/modules/exporting.js"></script>
+    <script src="bower_components/highcharts/modules/canvas-tools.js"></script>
+    <script src="bower_components/export-csv/export-csv.js"></script>
+    <script src="bower_components/jspdf/dist/jspdf.min.js"></script>
+
+    <script src="bower_components/highcharts-export-clientside/highcharts-export-clientside.js"></script>
+
+    <script>
+        $(".browser-support *[data-type]").each(function() {
+            var jThis = $(this);
+            if(Highcharts.exporting.supports(jThis.data("type"))) {
+                jThis.addClass("text-success");
+                jThis.html('<span class="glyphicon glyphicon-ok"></span>');
+            }
+            else {
+                jThis.addClass("text-danger");
+                jThis.html('<span class="glyphicon glyphicon-remove"></span>');
+            }
+        });
+    </script>
+
+    <script>
+        $('#encodedChart').highcharts({
+            title: {
+                text: 'Bitrate-PSNR'
+
+            },
+            chart: {
+                type: 'spline'
+
+            },
+            xAxis: {title: {
+                    text: 'BITRATE (bps)'
+                }
+
+            },
+            yAxis: {
+                title: {
+                    text: 'PSNR (dB)'
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1
+
+                }]
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'middle',
+                borderWidth: 0
+            },
+            colors: ['#FF2714', '#FFFB37','#71FF27','#3C8EFF','#FF30B0','#ED6E12','#4BFFD3','#696969'],
+            series: [{
+                name: '320x240p',
+                data:[[19591,19.856947],[26018,20.423545],[48439,21.779518],[88378,23.18932],[167686,24.584594],[332484,25.760281],[666696,26.555204],[1299272,26.984816]]
+            }, {
+                name: '384x288p',
+                data:[[26545,20.181065],[35827,20.832341],[67109,22.264336],[122015,23.759939],[228947,25.245974],[448322,26.500037],[891581,27.359479],[1733331,27.830526]]
+            }, {
+                name: '512x384p',
+                data:[[44871,20.74237],[60551,21.474618],[112930,23.050527],[202998,24.706436],[372770,26.351113],[715801,27.762424],[1402126,28.754569],[2713951,29.315605]]
+            }, {
+                name: '640x480p',
+                data:[[68490,21.2352],[92611,22.040477],[169963,23.738708],[300370,25.524189],[541229,27.304415],[1019441,28.846623],[1967097,29.958649],[3784522,30.60557]]
+            }, {
+                name: '720x480p',
+                data:[[77337,21.375199],[104487,22.196951],[189832,23.922838],[333559,25.748708],[598241,27.579234],[1122576,29.18267],[2160021,30.353592],[4151330,31.040088]]
+            }, {
+                name: '1280x720p',
+                data:[[203468,22.598449],[265453,23.577709],[463353,25.622796],[777301,27.769324],[1343041,29.975771],[2413749,32.011388],[4485124,33.630976],[8506066,34.677903]]
+            }, {
+                    name: '1920x1080p',
+                    data:[[444833,23.751569],[569951,24.883288],[957178,27.242495],[1547351,29.691935],[2594788,32.248784],[4500656,34.718626],[8136943,36.866063],[15233550,38.450724]]
+                }, {
+                    name: 'Convex Hull',
+                    data:[[19591,19.856947],[26018,20.423545],[48439,21.779518],[88378,23.18932],[167686,24.584594],[228947,25.245974],[372770,26.351113],[541229,27.304415],[598241,27.579234],[1343041,29.975771],[2413749,32.011388],[2594788,32.248784],[4500656,34.718626],[8136943,36.866063],[15233550,38.450724]]
+                }],
+            exporting: {
+                filename: 'Soccer2min'
+
+            }
+        });
+    </script>
+
+</div>
+</body>
+</html>

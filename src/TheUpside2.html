@@ -1,0 +1,106 @@
+<html>
+<head>
+    <title>Encoding plots for TheUpside</title>
+
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css" />
+   
+</head>
+<body>
+<div class="container">
+    <h1>Encoding plots for TheUpside</h1>
+
+    <div class="highcharts-container" id="encodedChart"></div>
+
+
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/highcharts/highcharts.js"></script>
+    <script src="bower_components/highcharts/modules/exporting.js"></script>
+    <script src="bower_components/highcharts/modules/canvas-tools.js"></script>
+    <script src="bower_components/export-csv/export-csv.js"></script>
+    <script src="bower_components/jspdf/dist/jspdf.min.js"></script>
+
+    <script src="bower_components/highcharts-export-clientside/highcharts-export-clientside.js"></script>
+
+    <script>
+        $(".browser-support *[data-type]").each(function() {
+            var jThis = $(this);
+            if(Highcharts.exporting.supports(jThis.data("type"))) {
+                jThis.addClass("text-success");
+                jThis.html('<span class="glyphicon glyphicon-ok"></span>');
+            }
+            else {
+                jThis.addClass("text-danger");
+                jThis.html('<span class="glyphicon glyphicon-remove"></span>');
+            }
+        });
+    </script>
+
+    <script>
+        $('#encodedChart').highcharts({
+            title: {
+                text: 'Bitrate-PSNR'
+
+            },
+            chart: {
+                type: 'spline'
+
+            },
+            xAxis: {title: {
+                    text: 'BITRATE (bps)'
+                }
+
+            },
+            yAxis: {
+                title: {
+                    text: 'PSNR (dB)'
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1
+
+                }]
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'middle',
+                borderWidth: 0
+            },
+            colors: ['#FF2714', '#FFFB37','#71FF27','#3C8EFF','#FF30B0','#ED6E12','#4BFFD3','#696969'],
+            series: [{
+                name: '320x240p',
+                data:[[11571,24.996795],[15123,26.235117],[24166,28.421408],[39337,30.498507],[65773,32.27782],[112837,33.695381],[199688,34.701548],[363224,35.329181]]
+            }, {
+                name: '384x288p',
+                data:[[14992,25.529013],[19924,26.843856],[31911,29.127863],[51863,31.316236],[86670,33.22632],[148477,34.764582],[262481,35.877616],[480746,36.588728]]
+            }, {
+                name: '512x384p',
+                data:[[23060,26.409913],[30736,27.823763],[49505,30.285963],[80577,32.639965],[133726,34.722244],[228083,36.439607],[404655,37.724894],[753430,38.574147]]
+            }, {
+                name: '640x480p',
+                data:[[32640,27.07752],[43838,28.583133],[70231,31.172286],[113308,33.642834],[186785,35.869331],[318689,37.742904],[569474,39.185481],[1086060,40.169995]]
+            }, {
+                name: '720x480p',
+                data:[[35926,27.271881],[48333,28.793988],[77355,31.469413],[124169,33.983778],[204403,36.256394],[348195,38.178959],[622617,39.683496],[1199805,40.729144]]
+            }, {
+                name: '1280x720p',
+                data:[[81767,28.687395],[109532,30.437936],[172575,33.488702],[269940,36.306563],[436739,38.862736],[743595,41.123393],[1382021,42.991717],[2966273,44.470417]]
+            }, {
+                    name: '1920x1080p',
+                    data:[[168031,29.763016],[224414,31.759753],[345782,35.115123],[531165,38.138035],[854883,40.854402],[1495595,43.253623],[3051389,45.348651],[7155015,47.482046]]
+                }, {
+                    name: 'Convex Hull',
+                    data:[[11571,24.996795],[15123,26.235117],[24166,28.421408],[39337,30.498507],[65773,32.27782],[86670,33.22632],[133726,34.722244],[204403,36.256394],[348195,38.178959],[436739,38.862736],[743595,41.123393],[1382021,42.991717],[1495595,43.253623],[3051389,45.348651],[7155015,47.482046]]
+                }],
+            exporting: {
+                filename: 'TheUpside'
+
+            }
+        });
+    </script>
+
+</div>
+</body>
+</html>
