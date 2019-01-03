@@ -1,0 +1,106 @@
+<html>
+<head>
+    <title>Encoding plots for BBB2min</title>
+
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css" />
+   
+</head>
+<body>
+<div class="container">
+    <h1>Encoding plots for BBB2min</h1>
+
+    <div class="highcharts-container" id="encodedChart"></div>
+
+
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/highcharts/highcharts.js"></script>
+    <script src="bower_components/highcharts/modules/exporting.js"></script>
+    <script src="bower_components/highcharts/modules/canvas-tools.js"></script>
+    <script src="bower_components/export-csv/export-csv.js"></script>
+    <script src="bower_components/jspdf/dist/jspdf.min.js"></script>
+
+    <script src="bower_components/highcharts-export-clientside/highcharts-export-clientside.js"></script>
+
+    <script>
+        $(".browser-support *[data-type]").each(function() {
+            var jThis = $(this);
+            if(Highcharts.exporting.supports(jThis.data("type"))) {
+                jThis.addClass("text-success");
+                jThis.html('<span class="glyphicon glyphicon-ok"></span>');
+            }
+            else {
+                jThis.addClass("text-danger");
+                jThis.html('<span class="glyphicon glyphicon-remove"></span>');
+            }
+        });
+    </script>
+
+    <script>
+        $('#encodedChart').highcharts({
+            title: {
+                text: 'Bitrate-PSNR'
+
+            },
+            chart: {
+                type: 'spline'
+
+            },
+            xAxis: {title: {
+                    text: 'BITRATE (bps)'
+                }
+
+            },
+            yAxis: {
+                title: {
+                    text: 'PSNR (dB)'
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1
+
+                }]
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'middle',
+                borderWidth: 0
+            },
+            colors: ['#FF2714', '#FFFB37','#71FF27','#3C8EFF','#FF30B0','#ED6E12','#4BFFD3','#696969'],
+            series: [{
+                name: '320x240p',
+                data:[[8297,23.956555],[10818,25.013652],[17735,26.637629],[29261,28.03924],[51356,29.244507],[96074,30.190226],[188680,30.793043],[371699,31.102111]]
+            }, {
+                name: '384x288p',
+                data:[[10444,24.402467],[13951,25.476202],[23413,27.138252],[38963,28.611586],[68846,29.904275],[129016,30.929996],[252661,31.591411],[497177,31.933608]]
+            }, {
+                name: '512x384p',
+                data:[[15796,24.98544],[21863,26.146719],[37266,27.962505],[62384,29.572885],[110503,31.046518],[207293,32.249244],[407971,33.040321],[815638,33.466164]]
+            }, {
+                name: '640x480p',
+                data:[[22430,25.463314],[31789,26.692328],[54211,28.622372],[90950,30.390267],[160233,32.037269],[299555,33.418234],[589580,34.351634],[1191310,34.872815]]
+            }, {
+                name: '720x480p',
+                data:[[24954,25.576298],[35280,26.837009],[60059,28.815439],[100576,30.644209],[176817,32.37409],[330287,33.845228],[651556,34.86337],[1326092,35.444506]]
+            }, {
+                name: '1280x720p',
+                data:[[58630,26.688832],[83505,28.155601],[140645,30.530402],[232381,32.793829],[398597,35.057234],[724117,37.127205],[1413083,38.733987],[2909558,39.816375]]
+            }, {
+                    name: '1920x1080p',
+                    data:[[126709,27.733408],[180150,29.387241],[298155,32.100225],[485906,34.813372],[837032,37.698724],[1555564,40.659481],[3126578,43.551169],[6355335,46.565039]]
+                }, {
+                    name: 'Convex Hull',
+                    data:[[8297,23.956555],[10818,25.013652],[17735,26.637629],[29261,28.03924],[38963,28.611586],[51356,29.244507],[68846,29.904275],[110503,31.046518],[176817,32.37409],[398597,35.057234],[724117,37.127205],[837032,37.698724],[1555564,40.659481],[3126578,43.551169],[6355335,46.565039]]
+                }],
+            exporting: {
+                filename: 'BBB2min'
+
+            }
+        });
+    </script>
+
+</div>
+</body>
+</html>
