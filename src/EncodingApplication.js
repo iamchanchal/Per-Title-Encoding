@@ -1,4 +1,4 @@
-var inputVideoFile = "../resource/Fantastic_Four_2015_Trailer_3_Intl_5.1-1080p-HDTN.mp4";
+var inputVideoFile = "../resource/InputFile.mp4";
 var commonName = inputVideoFile.split('resource/')[1].split('.')[0];
 var ffmpeg = require('fluent-ffmpeg');
 var fs = require('fs');
@@ -17,21 +17,21 @@ ffmpeg.ffprobe(inputVideoFile, function(err, metadata) {
     resolution = width + "x" + height;
 });
 
-var jsonFile = "../resource/reverse/"+commonName+"json2.txt"; //saves all the psnr-bitrate points
+var jsonFile = "../resource/"+commonName+"json.txt"; //saves all the psnr-bitrate points
 
 function processingInputFile(i,length,breadth,psnrBitrateCounter){
-    var outputVideoFile = "../resource/reverse/"+commonName+"IntermediateCRFEncoding"+length+"x"+breadth+"_"+i+".mp4";
-    var y4mOutput = "../resource/reverse/"+commonName+"y4mOutput"+length+"x"+breadth+"_"+i+".y4m";
+    var outputVideoFile = "../resource/"+commonName+"IntermediateCRFencoding"+length+"x"+breadth+"_"+i+".mp4";
+    var y4mOutput = "../resource/"+commonName+"y4mOutput"+length+"x"+breadth+"_"+i+".y4m";
 
 
 //saving console log message in a text file
-  //  var logFileName = "../resource/log"+commonName+length+"x"+breadth+"_"+i+".txt";
+    var logFileName = "../resource/log"+commonName+length+"x"+breadth+"_"+i+".txt";
 
     var util = require('util');
-   // var logFile = fs.createWriteStream(logFileName, { flags: 'a' });
+    var logFile = fs.createWriteStream(logFileName, { flags: 'a' });
     var logStdout = process.stdout;
     console.log = function () {
-     //   logFile.write(util.format.apply(null, arguments) + '\n');
+        logFile.write(util.format.apply(null, arguments) + '\n');
         logStdout.write(util.format.apply(null, arguments) + '\n');
     }
     console.error = console.log;
@@ -84,7 +84,7 @@ function y4mcal(i,length,breadth,outputVideoFile,y4mOutput,psnrBitrateCounter) {
             console.log('An error occurred: ' + err.message);
         })
         .on('end', function (err, stdout, stderr) {
-            console.log('Processing CRF encoding finished !');
+            console.log('Processing raw file conversion finished !');
             console.log(JSON.stringify(stdout, null, " "));
             psnrcal(i,length,breadth,outputVideoFile,y4mOutput,psnrBitrateCounter);
         })
@@ -134,7 +134,7 @@ function psnrcal(i,length,breadth,outputVideoFile,y4mOutput,psnrBitrateCounter) 
         .run();
 }
 
-//Encoding input file from CRF 18 to 53 for 480p,720p and 1080p
+//Encoding input file from CRF 18 to 53 for 320x240,384x288,512x384,640x480,720x480,1280x720 and 1920x1080.
 function keepItRunning(i,length,breadth,psnrBitrateCounter){
     if(length==320&&breadth==240&&i==53){
         length=384; breadth=288;i=18;
@@ -188,16 +188,15 @@ function printHullPoints() {
     var hull = require('../lib/hull.js');
     var hullPoints = new Array(hull(psnrBitrateList,Infinity));
 
-    var hullFile = "../resource/reverse/"+commonName+"Hull2.txt";
+    var hullFile = "../resource/"+commonName+"Hull.txt";
     fs.writeFile(hullFile, '', function () {
         console.log('done overwriting contents of hull file if it exists!')
     });
 
     var hullstream = fs.createWriteStream(hullFile, {flags: 'a'});
 
-    hullstream.write("Here come the Hull Points");
-    console.log("Here come the Hull Points");
-    console.log("length of hull points returned by original hull method:: "+hullPoints.length);
+    hullstream.write("The Hull Points");
+    console.log("The Hull Points");
     for (var r = 0; r < hullPoints.length; r++) {
         hullstream.write("\n"+ "value of r::"+r);
         for (var k = 0; k < hullPoints[r].length; k++) {
@@ -217,6 +216,7 @@ function printHullPoints() {
     //popping the redundant convex hull point from the list
     hull2D.pop();
 
+    //arrays that will hold bitrate,psnr pairs for a particular resolution
     var arr320x240 = new Array(8);
     var arr384x288 = new Array(8);
     var arr512x384 = new Array(8);
@@ -332,6 +332,7 @@ function printHullPoints() {
         }
     }
 
+    //client-side chart creation
    var htmlData = "<html>\n" +
         "<head>\n" +
         "    <title>Encoding plots for "+commonName+"</title>\n" +
@@ -402,7 +403,7 @@ function printHullPoints() {
         "                verticalAlign: 'middle',\n" +
         "                borderWidth: 0\n" +
         "            },\n" +
-        "            colors: ['#FF2714', '#FFFB37','#71FF27','#3C8EFF','#FF30B0','#ED6E12','#4BFFD3','#FF2EEC'],\n" +
+        "            colors: ['#FF2714', '#FFFB37','#71FF27','#3C8EFF','#FF30B0','#ED6E12','#4BFFD3','#696969'],\n" +
         "            series: [{\n" +
         "                name: '320x240p',\n" +
         "                data:"+JSON.stringify(arr320x240)+"\n" +
@@ -440,7 +441,7 @@ function printHullPoints() {
         "</html>";
 
 
-    chartFile=commonName+"2.html";
+    chartFile=commonName+".html";
     fs.writeFile(chartFile,htmlData, function () {
         console.log('Wrote html file');
     });
@@ -457,199 +458,7 @@ function printHullPoints() {
         bitrateLadderArray[x] = ['',0,0];
     }
 
-   /* var arr320x240min = Math.abs(arr320x240[0][0]-hull2D[0][0]);
-    for(var x = arr320x240.length-1; x >=0 ; x--){
-        var counter = 0;
-        for(var y = hull2D.length-1; y >=0 ; y--){
-            if(arr320x240[x][0] == hull2D[y][0] && arr320x240[x][1] == hull2D[y][1] ){
-                bitrateLadderArray[0][0]= "320x240p";
-                bitrateLadderArray[0][1]=hull2D[y][0];
-                bitrateLadderArray[0][2]=hull2D[y][1];
-
-                counter++;
-                break;
-            }
-            else if((Math.abs(arr320x240[x][0]-hull2D[y][0])<arr320x240min)){
-                bitrateLadderArray[0][0]= "320x240p";
-                if(hull2D[y][1]>arr320x240[x][1]) {
-                    bitrateLadderArray[0][1] = hull2D[y][0];
-                    bitrateLadderArray[0][2] = hull2D[y][1];
-                }else{
-                    bitrateLadderArray[0][1] = arr320x240[x][0];
-                    bitrateLadderArray[0][2] = arr320x240[x][1];
-                }
-            }
-        }
-        if(counter!=0){
-            break;
-        }
-    }
-    console.log("New bitrate for 320x240: "+bitrateLadderArray[0][1]+","+bitrateLadderArray[0][2]);
-
-    var arr384x288min = Math.abs(arr384x288[0][0]-hull2D[0][0]);
-    for( var x =arr384x288.length-1;x >= 0; x--){
-        var counter = 0;
-        for(var y = hull2D.length-1;y >= 0;  y--){
-            if(arr384x288[x][0] == hull2D[y][0] && arr384x288[x][1] == hull2D[y][1]){
-                bitrateLadderArray[1][0]= "384x288p";
-                bitrateLadderArray[1][1]=hull2D[y][0];
-                bitrateLadderArray[1][2]=hull2D[y][1];
-                counter++;
-                break;
-            }
-            else if((Math.abs(arr384x288[x][0]-hull2D[y][0])<arr384x288min)){
-                bitrateLadderArray[1][0]= "384x288p";
-                if(hull2D[y][1]>arr384x288[x][1]) {
-                    bitrateLadderArray[1][1] = hull2D[y][0];
-                    bitrateLadderArray[1][2] = hull2D[y][1];
-                }else{
-                    bitrateLadderArray[1][1] = arr384x288[x][0];
-                    bitrateLadderArray[1][2] = arr384x288[x][1];
-                }
-            }
-        }
-        if(counter!=0){
-            break;
-        }
-    }
-    console.log("New bitrate for 384x288p: "+bitrateLadderArray[1][1]+","+bitrateLadderArray[1][2]);
-
-    var arr512x384min = Math.abs(arr512x384[0][0]-hull2D[0][0]);
-    for(var x = arr512x384.length-1; x >= 0;  x--){
-        var counter = 0;
-        for(var y = hull2D.length-1;y >= 0;  y--){
-            if(arr512x384[x][0] == hull2D[y][0] && arr512x384[x][1] == hull2D[y][1]){
-                bitrateLadderArray[2][0]= "512x384p";
-                bitrateLadderArray[2][1]=hull2D[y][0];
-                bitrateLadderArray[2][2]=hull2D[y][1];
-                counter++;
-                break;
-            }
-            else if((Math.abs(arr512x384[x][0]-hull2D[y][0])<arr512x384min)){
-                bitrateLadderArray[2][0]= "512x384p";
-                if(hull2D[y][1]>arr512x384[x][1]) {
-                    bitrateLadderArray[2][1] = hull2D[y][0];
-                    bitrateLadderArray[2][2] = hull2D[y][1];
-                }else{
-                    bitrateLadderArray[2][1] = arr512x384[x][0];
-                    bitrateLadderArray[2][2] = arr512x384[x][1];
-                }
-            }
-        }
-        if(counter!=0){
-            break;
-        }
-    }
-    console.log("New bitrate for 512x384p: "+bitrateLadderArray[2][1]+","+bitrateLadderArray[2][2]);
-
-    var arr640x480min = Math.abs(arr640x480[0][0]-hull2D[0][0]);
-    for(var x = arr640x480.length-1;x >= 0;  x--){
-        var counter = 0;
-        for(var y = hull2D.length-1;y >= 0;  y--){
-            if(arr640x480[x][0] == hull2D[y][0] && arr640x480[x][1] == hull2D[y][1]){
-                bitrateLadderArray[3][0]= "640x480p";
-                bitrateLadderArray[3][1]=hull2D[y][0];
-                bitrateLadderArray[3][2]=hull2D[y][1];
-                counter++;
-                break;
-            }
-            else if((Math.abs(arr640x480[x][0]-hull2D[y][0])<arr640x480min)){
-                bitrateLadderArray[3][0]= "640x480p";
-                if(hull2D[y][1]>arr640x480[x][1]) {
-                    bitrateLadderArray[3][1] = hull2D[y][0];
-                    bitrateLadderArray[3][2] = hull2D[y][1];
-                }else{
-                    bitrateLadderArray[3][1] = arr640x480[x][0];
-                    bitrateLadderArray[3][2] = arr640x480[x][1];
-                }
-            }
-        }
-        if(counter!=0){
-            break;
-        }
-    }
-    console.log("New bitrate for 640x480p: "+bitrateLadderArray[3][1]+","+bitrateLadderArray[3][2]);
-    var arr720x480min = Math.abs(arr720x480[0][0]-hull2D[0][0]);
-    for(var x = arr720x480.length-1; x >= 0; x--){
-        var counter = 0;
-        for(var y =hull2D.length-1; y >= 0; y--){
-            if(arr720x480[x][0] == hull2D[y][0] && arr720x480[x][1] == hull2D[y][1]){
-                bitrateLadderArray[4][0]= "720x480p";
-                bitrateLadderArray[4][1]=hull2D[y][0];
-                bitrateLadderArray[4][2]=hull2D[y][1];
-                counter++;
-                break;
-            }
-            else if((Math.abs(arr720x480[x][0]-hull2D[y][0])<arr720x480min)){
-                bitrateLadderArray[4][0]= "720x480p";
-                if(hull2D[y][1]>arr720x480[x][1]) {
-                    bitrateLadderArray[4][1] = hull2D[y][0];
-                    bitrateLadderArray[4][2] = hull2D[y][1];
-                }else{
-                    bitrateLadderArray[4][1] = arr720x480[x][0];
-                    bitrateLadderArray[4][2] = arr720x480[x][1];
-                }
-            }
-        }
-        if(counter!=0){
-            break;
-        }
-    }
-    console.log("New bitrate for 720x480p: "+bitrateLadderArray[4][1]+","+bitrateLadderArray[4][2]);
-    var arr1280x720min = Math.abs(arr1280x720[0][0]-hull2D[0][0]);
-    for(var x =arr1280x720.length-1;x >= 0;  x--){
-        var counter = 0;
-        for(var y = hull2D.length-1;y >= 0;  y--){
-            if(arr1280x720[x][0] == hull2D[y][0] && arr1280x720[x][1] == hull2D[y][1]){
-                bitrateLadderArray[5][0]= "1280x720p";
-                bitrateLadderArray[5][1]=hull2D[y][0];
-                bitrateLadderArray[5][2]=hull2D[y][1];
-                counter++;
-                break;
-            }
-            else if((Math.abs(arr1280x720[x][0]-hull2D[y][0])<arr1280x720min)){
-                bitrateLadderArray[5][0]= "1280x720p";
-                if(hull2D[y][1]>arr1280x720[x][1]) {
-                    bitrateLadderArray[5][1] = hull2D[y][0];
-                    bitrateLadderArray[5][2] = hull2D[y][1];
-                }else{
-                    bitrateLadderArray[5][1] = arr1280x720[x][0];
-                    bitrateLadderArray[5][2] = arr1280x720[x][1];
-                }
-            }
-        }
-        if(counter!=0){
-            break;
-        }
-    }
-    console.log("New bitrate for 1280x720p: "+bitrateLadderArray[5][1]+","+bitrateLadderArray[5][2]);
-    var arr1920x1080min = Math.abs(arr1920x1080[0][0]-hull2D[0][0]);
-    for(var x = arr1920x1080.length-1;x >= 0;  x--){
-        var counter = 0;
-        for(var y = hull2D.length-1;y >= 0;  y--){
-            if(arr1920x1080[x][0] == hull2D[y][0] && arr1920x1080[x][1] == hull2D[y][1]){
-                bitrateLadderArray[6][0]= "1920x1080p";
-                bitrateLadderArray[6][1]=hull2D[y][0];
-                bitrateLadderArray[6][2]=hull2D[y][1];
-                counter++;
-                break;
-            }
-            else if((Math.abs(arr1920x1080[x][0]-hull2D[y][0])<arr1920x1080min)){
-                bitrateLadderArray[6][0]= "1920x1080p";
-                if(hull2D[y][1]>arr1920x1080[x][1]) {
-                    bitrateLadderArray[6][1] = hull2D[y][0];
-                    bitrateLadderArray[6][2] = hull2D[y][1];
-                }else{
-                    bitrateLadderArray[6][1] = arr1920x1080[x][0];
-                    bitrateLadderArray[6][2] = arr1920x1080[x][1];
-                }
-            }
-        }
-        if(counter!=0){
-            break;
-        }
-    }
-    console.log("New bitrate for 1920x1080p: "+bitrateLadderArray[6][1]+","+bitrateLadderArray[6][2]); */
+   // Evaluating optimal (bitrate, PSNR) pair for a particular resolution by finding common points in the resolution array and hull array
     for(var i=0;i<arr320x240.length;i++){
         for(var j=0;j<hull2D.length;j++){
             bitrateLadderArray[0][0]='320x240';
@@ -746,6 +555,7 @@ function printHullPoints() {
 
     console.log(bitrateLadderArray);
 
+    //printing the optimal points (new bitrate ladder) in an excel sheet
     var sheet1 = workbook.createSheet('sheet1', 4, 8);
     sheet1.set(1, 1, 'Quality');
     sheet1.set(2, 1, 'Bitrate');
